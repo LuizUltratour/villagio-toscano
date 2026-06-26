@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galeria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #E4E4E4;
+      --dark: #0B2636;
+      --border: rgba(11, 38, 54, 0.12);
+      --border-strong: rgba(11, 38, 54, 0.28);
+      --accent: #2471A3;
+      --white: #FFFFFF;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--dark);
+      font-family: var(--font-sans);
+    }
+
+    /* ── ROOT LAYOUT ── */
+    #g-root {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: var(--bg);
+    }
+
+    /* ── HEADER ── */
+    #g-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    #g-logo {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dark);
+    }
+
+    #g-logo span {
+      display: block;
+      font-size: 10px;
+      font-family: var(--font-sans);
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      opacity: 0.45;
+      margin-top: 2px;
+    }
+
+    #btn-close {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border-strong);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      transition: background 0.25s var(--ease), color 0.25s var(--ease);
+      color: var(--dark);
+    }
+
+    #btn-close:hover {
+      background: var(--dark);
+      color: var(--bg);
+      border-color: var(--dark);
+    }
+
+    /* ── FILTER SECTION ── */
+    #g-filters {
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    #filter-main {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 36px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    #filter-main::-webkit-scrollbar {
+      display: none;
+    }
+
+    .f-btn {
+      padding: 7px 20px;
+      border: 1px solid var(--border-strong);
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--dark);
+      white-space: nowrap;
+      border-radius: 5px;
+      transition: background 0.22s var(--ease), color 0.22s var(--ease), border-color 0.22s var(--ease), transform 0.15s var(--ease);
+    }
+
+    .f-btn:hover {
+      border-color: var(--dark);
+      background: rgba(11, 38, 54, 0.04);
+    }
+
+    .f-btn.active {
+      background: var(--dark);
+      color: var(--bg);
+      border-color: var(--dark);
+    }
+
+    .f-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Sub-filter */
+    #filter-sub {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.38s var(--ease), opacity 0.3s ease;
+    }
+
+    #filter-sub.open {
+      max-height: 56px;
+      opacity: 1;
+    }
+
+    #filter-sub-inner {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 36px 13px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    #filter-sub-inner::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sf-btn {
+      padding: 5px 16px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 10.5px;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--dark);
+      opacity: 0.55;
+      white-space: nowrap;
+      border-radius: 5px;
+      transition: opacity 0.2s, border-color 0.2s, background 0.2s, color 0.2s;
+    }
+
+    .sf-btn:hover {
+      opacity: 1;
+      border-color: var(--border-strong);
+    }
+
+    .sf-btn.active {
+      background: var(--accent);
+      color: var(--white);
+      border-color: var(--accent);
+      opacity: 1;
+    }
+
+    /* ── GALLERY SCROLL ── */
+    #g-scroll {
+      flex: 1;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    #g-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    #g-scroll::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    #g-scroll::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 5px;
+    }
+
+    /* ── GRID ── */
+    #g-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3px;
+      padding: 3px;
+    }
+
+    @media (max-width: 1100px) {
+      #g-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 700px) {
+      #g-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 420px) {
+      #g-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── SKELETON SHIMMER ── */
+    @keyframes shimmer {
+      0% {
+        background-position: -400px 0;
+      }
+
+      100% {
+        background-position: 400px 0;
+      }
+    }
+
+    .g-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg,
+          rgba(11, 38, 54, 0.06) 0%,
+          rgba(11, 38, 54, 0.13) 40%,
+          rgba(11, 38, 54, 0.06) 80%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite linear;
+      z-index: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .g-card.loaded::before {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ── CARD BASE ── */
+    .g-card {
+      position: relative;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      cursor: pointer;
+      background: rgba(11, 38, 54, 0.06);
+      animation: cardIn 0.45s var(--ease) both;
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.99);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .g-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.35s ease, transform 0.65s var(--ease);
+      position: relative;
+      z-index: 1;
+    }
+
+    .g-card.loaded img {
+      opacity: 1;
+    }
+
+    .g-card:hover img {
+      transform: scale(1.06);
+    }
+
+    .card-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px 14px 13px;
+      background: linear-gradient(to top, rgba(5, 15, 22, 0.92) 0%, rgba(5, 15, 22, 0.5) 60%, transparent 100%);
+      color: #E4E4E4;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      z-index: 2;
+    }
+
+    .g-card.loaded .card-overlay {
+      opacity: 1;
+    }
+
+    .card-title {
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.35;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+    }
+
+    .card-sub {
+      font-size: 9.5px;
+      font-weight: 400;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin-top: 4px;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    .card-zoom {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 34px;
+      height: 34px;
+      background: rgba(228, 228, 228, 0.88);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.75);
+      transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
+      color: var(--dark);
+      z-index: 2;
+    }
+
+    .g-card.loaded:hover .card-zoom {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Plant card */
+    .g-card.is-plant {
+      background: var(--white);
+    }
+
+    .g-card.is-plant img {
+      object-fit: contain;
+      padding: 12px;
+    }
+
+    .g-card.is-plant::before {
+      background: linear-gradient(90deg,
+          rgba(11, 38, 54, 0.04) 0%,
+          rgba(11, 38, 54, 0.09) 40%,
+          rgba(11, 38, 54, 0.04) 80%);
+      background-size: 800px 100%;
+    }
+
+    /* ── COBERTURA SPECIAL CARD ── */
+    .g-card.cob-card {
+      grid-column: span 2;
+      aspect-ratio: unset;
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+      border: 1px solid var(--border);
+    }
+
+    .g-card.cob-card::before {
+      display: none;
+    }
+
+    @media (max-width: 700px) {
+      .g-card.cob-card {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .g-card.cob-card {
+        grid-column: span 1;
+      }
+    }
+
+    .cob-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .cob-badge {
+      display: inline-block;
+      padding: 3px 11px;
+      background: var(--dark);
+      color: var(--bg);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border-radius: 5px;
+      margin-bottom: 5px;
+    }
+
+    .cob-name {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    .cob-area {
+      font-size: 11px;
+      opacity: 0.4;
+      margin-top: 2px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Floor tab switcher */
+    .floor-tabs {
+      display: flex;
+      padding: 3px;
+      border: 1px solid var(--border-strong);
+      border-radius: 5px;
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+
+    .floor-tab {
+      padding: 5px 16px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--dark);
+      opacity: 0.45;
+      border-radius: 5px;
+      white-space: nowrap;
+      transition: background 0.22s var(--ease), color 0.22s var(--ease), opacity 0.22s;
+    }
+
+    .floor-tab.active {
+      background: var(--dark);
+      color: var(--bg);
+      opacity: 1;
+    }
+
+    /* Floor image area */
+    .cob-body {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      min-height: 280px;
+    }
+
+    .floor-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.38s ease;
+    }
+
+    .floor-wrap.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* skeleton inside cob body */
+    .floor-skeleton {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg,
+          rgba(11, 38, 54, 0.05) 0%,
+          rgba(11, 38, 54, 0.11) 40%,
+          rgba(11, 38, 54, 0.05) 80%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite linear;
+      transition: opacity 0.3s ease;
+      z-index: 0;
+    }
+
+    .cob-body.loaded .floor-skeleton {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .floor-wrap img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      cursor: zoom-in;
+      opacity: 0;
+      transition: opacity 0.35s ease, transform 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .floor-wrap img.loaded {
+      opacity: 1;
+    }
+
+    .floor-wrap img:hover {
+      transform: scale(1.015);
+    }
+
+    .floor-lbl {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      padding: 4px 12px;
+      background: rgba(11, 38, 54, 0.65);
+      color: var(--bg);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      border-radius: 5px;
+    }
+
+    /* Footer */
+    .cob-footer {
+      padding: 11px 22px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+
+    .btn-see-both {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 18px;
+      border: 1px solid var(--border-strong);
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--dark);
+      border-radius: 5px;
+      transition: background 0.22s var(--ease), color 0.22s var(--ease);
+    }
+
+    .btn-see-both:hover {
+      background: var(--dark);
+      color: var(--bg);
+      border-color: var(--dark);
+    }
+
+    /* ── EMPTY STATE ── */
+    #g-empty {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+      gap: 10px;
+    }
+
+    #g-empty.show {
+      display: flex;
+    }
+
+    #g-empty p {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      opacity: 0.35;
+    }
+
+    #g-empty small {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      opacity: 0.25;
+    }
+
+    /* ── LIGHTBOX ── */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      background: rgba(11, 38, 54, 0.97);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    #lightbox.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #lb-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 20px 32px;
+      flex-shrink: 0;
+    }
+
+    #lb-title {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--bg);
+      letter-spacing: 0.03em;
+    }
+
+    #lb-sub {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(228, 228, 228, 0.4);
+      margin-top: 4px;
+    }
+
+    #lb-counter {
+      font-size: 11px;
+      color: rgba(228, 228, 228, 0.35);
+      letter-spacing: 0.06em;
+      padding-top: 4px;
+    }
+
+    #lb-close {
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(228, 228, 228, 0.25);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      color: var(--bg);
+      transition: background 0.22s, border-color 0.22s;
+      flex-shrink: 0;
+    }
+
+    #lb-close:hover {
+      background: var(--bg);
+      color: var(--dark);
+      border-color: var(--bg);
+    }
+
+    #lb-body {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 12px 80px;
+    }
+
+    #lb-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Dual floor lightbox */
+    #lb-dual {
+      display: none;
+      gap: 24px;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #lb-dual.show {
+      display: flex;
+    }
+
+    .dual-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      height: 100%;
+      min-width: 0;
+    }
+
+    .dual-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(228, 228, 228, 0.5);
+      flex-shrink: 0;
+    }
+
+    .dual-col img {
+      flex: 1;
+      max-width: 100%;
+      min-height: 0;
+      object-fit: contain;
+    }
+
+    /* Nav arrows */
+    .lb-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(228, 228, 228, 0.18);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      color: var(--bg);
+      transition: background 0.22s, border-color 0.22s;
+    }
+
+    .lb-nav:hover {
+      background: rgba(228, 228, 228, 0.1);
+      border-color: rgba(228, 228, 228, 0.35);
+    }
+
+    .lb-nav:disabled {
+      opacity: 0.18;
+      cursor: default;
+    }
+
+    #lb-prev {
+      left: 20px;
+    }
+
+    #lb-next {
+      right: 20px;
+    }
+
+    #lb-foot {
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      gap: 12px;
+    }
+
+    #lb-notice {
+      font-size: 10.5px;
+      color: rgba(228, 228, 228, 0.35);
+      letter-spacing: 0.06em;
+      padding: 6px 18px;
+      border: 1px solid rgba(228, 228, 228, 0.1);
+      border-radius: 5px;
+    }
+
+    #lb-notice:empty {
+      display: none;
+    }
+
+    /* ── ZOOM CONTROLS ── */
+    #lb-zoom-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .lb-zoom-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(228, 228, 228, 0.22);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      color: var(--bg);
+      font-size: 18px;
+      line-height: 1;
+      transition: background 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .lb-zoom-btn:hover {
+      background: rgba(228, 228, 228, 0.12);
+      border-color: rgba(228, 228, 228, 0.4);
+    }
+
+    .lb-zoom-btn:disabled {
+      opacity: 0.2;
+      cursor: default;
+    }
+
+    #lb-zoom-level {
+      font-size: 10.5px;
+      color: rgba(228, 228, 228, 0.45);
+      letter-spacing: 0.06em;
+      min-width: 36px;
+      text-align: center;
+    }
+
+    /* image zoom/pan state */
+    #lb-img {
+      cursor: zoom-in;
+      transform-origin: center center;
+      will-change: transform;
+      transition: opacity 0.18s ease;
+    }
+
+    #lb-img.zoomed {
+      cursor: grab;
+    }
+
+    #lb-img.dragging {
+      cursor: grabbing;
+      transition: none;
+    }
+
+    /* ── TOUCH / SWIPE hint on lightbox nav ── */
+    @media (hover: none) {
+      .card-zoom {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .g-card:hover img {
+        transform: none;
+      }
+    }
+
+    /* ── TABLET (≤ 900px) ── */
+    @media (max-width: 900px) {
+      #filter-main {
+        padding: 12px 20px;
+        gap: 5px;
+      }
+
+      #filter-sub-inner {
+        padding: 6px 20px 10px;
+      }
+
+      #lb-head {
+        padding: 16px 20px;
+      }
+
+      #lb-body {
+        padding: 8px 60px;
+      }
+
+      #lb-prev {
+        left: 10px;
+      }
+
+      #lb-next {
+        right: 10px;
+      }
+    }
+
+    /* ── MOBILE (≤ 600px) ── */
+    @media (max-width: 600px) {
+      #g-header {
+        padding: 10px 14px;
+      }
+
+      #filter-main {
+        padding: 10px 12px;
+        gap: 6px;
+      }
+
+      #filter-sub-inner {
+        padding: 6px 12px 10px;
+      }
+
+      .f-btn {
+        padding: 6px 14px;
+        font-size: 10.5px;
+      }
+
+      .sf-btn {
+        padding: 4px 12px;
+      }
+
+      /* grid */
+      #g-grid {
+        gap: 2px;
+        padding: 2px;
+      }
+
+      /* card text */
+      .card-title {
+        font-size: 11.5px;
+      }
+
+      /* cob-card header stacks vertically */
+      .cob-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px 16px 10px;
+        gap: 10px;
+      }
+
+      .cob-name {
+        font-size: 16px;
+      }
+
+      .cob-body {
+        min-height: 200px;
+      }
+
+      .cob-footer {
+        padding: 9px 16px;
+      }
+
+      .btn-see-both {
+        font-size: 10px;
+        padding: 6px 14px;
+      }
+
+      /* lightbox */
+      #lb-head {
+        padding: 12px 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      #lb-title {
+        font-size: 14px;
+      }
+
+      #lb-body {
+        padding: 0;
+      }
+
+      /* arrows float over image on mobile */
+      #lb-prev,
+      #lb-next {
+        width: 38px;
+        height: 38px;
+        background: rgba(11, 38, 54, 0.55);
+        border-color: transparent;
+      }
+
+      #lb-prev {
+        left: 8px;
+      }
+
+      #lb-next {
+        right: 8px;
+      }
+
+      /* dual view stacks vertically on mobile */
+      #lb-dual {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .dual-col {
+        height: auto;
+        flex: none;
+        width: 100%;
+      }
+
+      .dual-col img {
+        max-height: 35vh;
+      }
+
+      #lb-foot {
+        padding: 8px 14px;
+      }
+
+      #lb-notice {
+        font-size: 9.5px;
+        padding: 4px 14px;
+      }
+    }
+
+    /* ── VERY SMALL (≤ 360px) ── */
+    @media (max-width: 360px) {
+      .f-btn {
+        padding: 5px 10px;
+        font-size: 10px;
+      }
+
+      .floor-tab {
+        padding: 4px 10px;
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="g-root">
+
+    <!-- Header -->
+    <header id="g-header">
+      <button id="btn-close" title="Fechar galeria" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </header>
+
+    <!-- Filters -->
+    <div id="g-filters">
+      <div id="filter-main"></div>
+      <div id="filter-sub">
+        <div id="filter-sub-inner"></div>
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    <div id="g-scroll">
+      <div id="g-grid"></div>
+      <div id="g-empty">
+        <p>Nenhuma imagem encontrada</p>
+        <small>Selecione outra categoria</small>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" role="dialog" aria-modal="true">
+    <div id="lb-head">
+      <div>
+        <div id="lb-title"></div>
+        <div id="lb-sub"></div>
+      </div>
+      <div id="lb-counter"></div>
+      <button id="lb-close" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div id="lb-body">
+      <button id="lb-prev" class="lb-nav" aria-label="Anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+      <img id="lb-img" src="" alt="">
+      <div id="lb-dual">
+        <div class="dual-col" id="dc-a">
+          <div class="dual-lbl"></div>
+          <img src="" alt="">
+        </div>
+        <div class="dual-col" id="dc-b">
+          <div class="dual-lbl"></div>
+          <img src="" alt="">
+        </div>
+      </div>
+      <button id="lb-next" class="lb-nav" aria-label="Próximo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+          <path d="M9 18l6-6-6-6" />
+        </svg>
+      </button>
+    </div>
+    <div id="lb-foot">
+      <div id="lb-zoom-bar">
+        <button class="lb-zoom-btn" id="lb-zoom-out" aria-label="Zoom out" title="Diminuir zoom">−</button>
+        <span id="lb-zoom-level">100%</span>
+        <button class="lb-zoom-btn" id="lb-zoom-in" aria-label="Zoom in" title="Aumentar zoom">+</button>
+      </div>
+      <div id="lb-notice"></div>
+    </div>
+  </div>
+
+  <script>
+    // ================================================================
+    // CONFIGURAÇÃO DA GALERIA
+    // Edite GALLERY_CONFIG.items abaixo para adicionar suas imagens.
+    // Coloque os arquivos nas pastas dentro de assets/ e atualize
+    // os campos src com os nomes exatos dos arquivos.
+    // ================================================================
+    const GALLERY_CONFIG = {
+      projectName: 'VILLAGIO TOSCANO',
+      projectSub: 'EMPREENDIMENTO',
+
+      categories: [
+        { id: 'implantacao', label: 'Implantação' },
+        { id: 'aereas', label: 'Aéreas' },
+        {
+          id: 'percurso', label: 'Percurso Toscano',
+          subs: [
+            { id: 'perc-externas', label: 'Externas' },
+            { id: 'perc-internas', label: 'Internas' },
+            { id: 'perc-plantas',  label: 'Plantas' },
+          ]
+        },
+        {
+          id: 'ed-frente', label: 'Ed. Frente',
+          subs: [
+            { id: 'frente-externas',  label: 'Externas' },
+            { id: 'frente-francisco', label: 'Ed. Francesco' },
+            { id: 'frente-giovanni',  label: 'Ed. Giovanni' },
+            { id: 'frente-lorenzo',   label: 'Ed. Lorenzo' },
+            { id: 'frente-plantas',   label: 'Plantas' },
+          ]
+        },
+        {
+          id: 'ed-bellini', label: 'Ed. Bellini',
+          subs: [
+            { id: 'bellini-externas', label: 'Externas' },
+            { id: 'bellini-fachada',  label: 'Fachada' },
+            { id: 'bellini-internas', label: 'Internas' },
+            { id: 'bellini-plantas',  label: 'Plantas' },
+          ]
+        },
+        {
+          id: 'ed-castelli', label: 'Ed. Castelli',
+          subs: [
+            { id: 'castelli-externas', label: 'Externas' },
+            { id: 'castelli-internas', label: 'Internas' },
+          ]
+        },
+        {
+          id: 'ed-ferrara', label: 'Ed. Ferrara',
+          subs: [
+            { id: 'ferrara-externas', label: 'Externas' },
+            { id: 'ferrara-internas', label: 'Internas' },
+          ]
+        },
+        {
+          id: 'ed-milani', label: 'Ed. Milani',
+          subs: [
+            { id: 'milani-externas', label: 'Externas' },
+            { id: 'milani-interna',  label: 'Interna' },
+          ]
+        },
+        {
+          id: 'ed-savoia', label: 'Ed. Savoia',
+          subs: [
+            { id: 'savoia-externas', label: 'Externas' },
+            { id: 'savoia-internas', label: 'Internas' },
+          ]
+        },
+        {
+          id: 'ed-vitalle', label: 'Ed. Vitalle',
+          subs: [
+            { id: 'vitalle-externas', label: 'Externas' },
+            { id: 'vitalle-internas', label: 'Internas' },
+          ]
+        },
+      ],
+
+      items: [
+
+        // IMPLANTAÇÃO ─────────────────────────────────────────────────
+        { id:1, type:'image', category:'implantacao', isPlant:true, title:'Implantação', src:'assets/Implantação/Implantação.png' },
+
+        // AÉREAS ──────────────────────────────────────────────────────
+        { id:20, type:'image', category:'aereas', title:'Vista Aérea',   src:'assets/Aéreas/Imagens/VILLAGIO TOSCANO_EXTERNO_AEREO_1.png' },
+        { id:21, type:'image', category:'aereas', title:'Vista Aérea',   src:'assets/Aéreas/Imagens/VILLAGIO TOSCANO_EXTERNO_AEREO_2.png' },
+        { id:22, type:'image', category:'aereas', title:'Vista Aérea',   src:'assets/Aéreas/Imagens/VILLAGIO TOSCANO_EXTERNO_AEREO_3.png' },
+        { id:23, type:'image', category:'aereas', title:'Vista Aérea',   src:'assets/Aéreas/Imagens/VILLAGIO TOSCANO_EXTERNO_AEREO_4.png' },
+        { id:24, type:'image', category:'aereas', title:'Vista Aérea',   src:'assets/Aéreas/Imagens/VILLAGIO TOSCANO_EXTERNO_AEREO_6.png' },
+        { id:25, type:'image', category:'aereas', title:'Fotomontagem',  src:'assets/Aéreas/Imagens/VILLAGIO TOSCANO_EXTERNO_FOTOMONTAGEM_01.png' },
+        { id:26, type:'image', category:'aereas', title:'Fotomontagem',  src:'assets/Aéreas/Imagens/VILLAGIO TOSCANO_EXTERNO_FOTOMONTAGEM_02.png' },
+        { id:27, type:'image', category:'aereas', title:'Fotomontagem',  src:'assets/Aéreas/Imagens/VILLAGIO TOSCANO_EXTERNO_FOTOMONTAGEM_04.png' },
+
+        // PERCURSO TOSCANO — Externas ─────────────────────────────────
+        { id:100, type:'image', category:'percurso', subCategory:'perc-externas', title:'Anfiteatro',        src:"assets/Percurso Toscano_/Externas/VILLAGIO TOSCANO_EXTERNO_ANFITEATRO_01_IA2.png" },
+        { id:101, type:'image', category:'percurso', subCategory:'perc-externas', title:'Igreja Noturna',    src:"assets/Percurso Toscano_/Externas/VILLAGIO TOSCANO_EXTERNO_IGREJA_NOTURNO.png" },
+        { id:102, type:'image', category:'percurso', subCategory:'perc-externas', title:'Igreja Neblina',    src:"assets/Percurso Toscano_/Externas/VILLAGIO TOSCANO_EXTERNO_NEBLINA_IGREJA_02.png" },
+        { id:103, type:'image', category:'percurso', subCategory:'perc-externas', title:'Pienza Neblina',    src:"assets/Percurso Toscano_/Externas/VILLAGIO TOSCANO_EXTERNO_NEBLINA_PIENZA_01.png" },
+        { id:104, type:'image', category:'percurso', subCategory:'perc-externas', title:'Pienza',            src:"assets/Percurso Toscano_/Externas/VILLAGIO TOSCANO_EXTERNO_PIENZA_01_FIMDODIA.png" },
+        { id:105, type:'image', category:'percurso', subCategory:'perc-externas', title:'Quiosque',          src:"assets/Percurso Toscano_/Externas/VILLAGIO TOSCANO_EXTERNO_QUIOSQUE_01_FIM DE DIA.png" },
+        { id:106, type:'image', category:'percurso', subCategory:'perc-externas', title:'Quiosque',          src:"assets/Percurso Toscano_/Externas/VILLAGIO TOSCANO_EXTERNO_QUIOSQUE_FIM DE DIA.png" },
+        { id:107, type:'image', category:'percurso', subCategory:'perc-externas', title:"Val d'Órcia",       src:"assets/Percurso Toscano_/Externas/VILLAGIO TOSCANO_EXTERNO_VALDORCIA_01_DIA.png" },
+        { id:108, type:'image', category:'percurso', subCategory:'perc-externas', title:"Val d'Órcia",       src:"assets/Percurso Toscano_/Externas/VILLAGIO TOSCANO_EXTERNO_VALDORCIA_02_DIA.png" },
+        { id:109, type:'image', category:'percurso', subCategory:'perc-externas', title:'Arena',             src:"assets/Percurso Toscano_/Externas/VILLAGIO_TOSCANO_ARENA.png" },
+        { id:110, type:'image', category:'percurso', subCategory:'perc-externas', title:'Arena',             src:"assets/Percurso Toscano_/Externas/VILLAGIO_TOSCANO_ARENA_FIMDODIA.png" },
+        { id:111, type:'image', category:'percurso', subCategory:'perc-externas', title:'Igreja',            src:"assets/Percurso Toscano_/Externas/VILLAGIO_TOSCANO_IGREJA.png" },
+        { id:112, type:'image', category:'percurso', subCategory:'perc-externas', title:'Igreja',            src:"assets/Percurso Toscano_/Externas/VILLAGIO_TOSCANO_IGREJA_FIMDODIA.png" },
+        { id:113, type:'image', category:'percurso', subCategory:'perc-externas', title:'Playground',        src:"assets/Percurso Toscano_/Externas/VILLAGIO_TOSCANO_PLAY.png" },
+        { id:114, type:'image', category:'percurso', subCategory:'perc-externas', title:'Pienza Noturna',    src:"assets/Percurso Toscano_/Externas/VILLAGIOTOSCANO_EXTERNO_PIENZA_01_NOTURNA.png" },
+
+        // PERCURSO TOSCANO — Internas ─────────────────────────────────
+        { id:120, type:'image', category:'percurso', subCategory:'perc-internas', title:'Igreja Interior',   src:"assets/Percurso Toscano_/Internas/VILLAGIO TOSCANO_EXTERNO_IGREJA_01.png" },
+        { id:121, type:'image', category:'percurso', subCategory:'perc-internas', title:'Pienza',            src:"assets/Percurso Toscano_/Internas/VILLAGIO TOSCANO_PIENZA.png" },
+        { id:122, type:'image', category:'percurso', subCategory:'perc-internas', title:'Pienza',            src:"assets/Percurso Toscano_/Internas/VILLAGIO TOSCANO_PIENZA_2.png" },
+        { id:123, type:'image', category:'percurso', subCategory:'perc-internas', title:'Pienza',            src:"assets/Percurso Toscano_/Internas/VILLAGIO TOSCANO_PIENZA_3.png" },
+
+        // PERCURSO TOSCANO — Plantas ──────────────────────────────────
+        { id:130, type:'image', category:'percurso', subCategory:'perc-plantas', isPlant:true, title:'Pienza — 2º Pav.',    src:"assets/Percurso Toscano_/Planta Baixa_/Pienza_2pav.png" },
+        { id:131, type:'image', category:'percurso', subCategory:'perc-plantas', isPlant:true, title:'Pienza — Térreo',     src:"assets/Percurso Toscano_/Planta Baixa_/Pienza_Térreo.png" },
+        { id:132, type:'image', category:'percurso', subCategory:'perc-plantas', isPlant:true, title:'San Gemignano',       src:"assets/Percurso Toscano_/Planta Baixa_/Villagio Toscano San gemignano.png" },
+
+        // ED. FRENTE — Externas ───────────────────────────────────────
+        { id:200, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Fachada',           src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_FRENTE_FIM DE DIA_01.png" },
+        { id:201, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Fachada',           src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_FRENTE_FIM DE DIA_02.png" },
+        { id:202, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Fachada',           src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_FRENTE_FIM DE DIA_04.png" },
+        { id:203, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Fachada',           src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_FRENTE_FIM DE DIA_05.png" },
+        { id:204, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Fachada Noite',     src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_FRENTE_NOITE.png" },
+        { id:205, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Fachada Noite',     src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_FRENTE_NOITE_01.png" },
+        { id:206, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Fachada Neblina',   src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_NEBLINA_FRENTE_01.png" },
+        { id:207, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Fachada Neblina',   src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_NEBLINA_FRENTE_02.png" },
+        { id:208, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Praça Frontal',     src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_PRAÇAFRONTAL.png" },
+        { id:209, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Praça Frontal',     src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_PRAÇAFRONTAL1.png" },
+        { id:210, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Praça Frontal',     src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_PRAÇAFRONTAL11.png" },
+        { id:211, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Praça Frontal',     src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_PRAÇAFRONTAL2.png" },
+        { id:212, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Praça Frontal',     src:"assets/Ed. Frente_/Externas/VILLAGIO TOSCANO_EXTERNO_PRAÇAFRONTAL3.png" },
+        { id:213, type:'image', category:'ed-frente', subCategory:'frente-externas', title:'Ed. Giovanni',      src:"assets/Ed. Frente_/Externas/VILLAGIO_TOSCANO_ED.GIOVANNI_FIMDODIA.png" },
+
+        // ED. FRENTE — Ed. Francesco ──────────────────────────────────
+        { id:220, type:'image', category:'ed-frente', subCategory:'frente-francisco', title:'Átrio',            src:"assets/Ed. Frente_/Internas/Ed. Francesco_/Ed. Francesco Atrio.png" },
+        { id:221, type:'image', category:'ed-frente', subCategory:'frente-francisco', title:'Átrio',            src:"assets/Ed. Frente_/Internas/Ed. Francesco_/Ed. Francesco Atrio_2.png" },
+        { id:222, type:'image', category:'ed-frente', subCategory:'frente-francisco', title:'Térreo',           src:"assets/Ed. Frente_/Internas/Ed. Francesco_/Ed. Francesco Terreo.png" },
+        { id:223, type:'image', category:'ed-frente', subCategory:'frente-francisco', title:'Térreo',           src:"assets/Ed. Frente_/Internas/Ed. Francesco_/Ed. Francesco Terreo_ 2.png" },
+
+        // ED. FRENTE — Ed. Giovanni ───────────────────────────────────
+        { id:230, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Hall de Entrada',   src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Hall de entrada torre_1.png" },
+        { id:231, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Rooftop',           src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav 1600_Roftop (1).png" },
+        { id:232, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Rooftop',           src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav 1600_Roftop (2).png" },
+        { id:233, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Rooftop',           src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav 1600_Roftop (5).png" },
+        { id:234, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Café',              src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav 400_Café circulação_1.png" },
+        { id:235, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Café',              src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav 400_Café circulação_2.png" },
+        { id:236, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Lavanderia',        src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav 400_Lavanderia.png" },
+        { id:237, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Market',            src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav 400_Market.png" },
+        { id:238, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Circulação',        src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav_200_Circulação.png" },
+        { id:239, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Escalada',          src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav_200_Escalada.png" },
+        { id:240, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Academia',          src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav_300_Academia 2.png" },
+        { id:241, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Sala de Jogos',     src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav_400_Sala de jogos_1.png" },
+        { id:242, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Sala de Jogos',     src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav_400_Sala de jogos_2.png" },
+        { id:243, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Sala Gamer',        src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav_400_Sala gamer.png" },
+        { id:244, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Salão de Festas',   src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav_400_Salão de festas maior.png" },
+        { id:245, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Salão de Festas',   src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav_400_Salão de festas menor_1.png" },
+        { id:246, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Spa',               src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav_400_Spa_1.png" },
+        { id:247, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Spa',               src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Pav_400_Spa_2.png" },
+        { id:248, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Restaurante',       src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed. Giovanni_Térreo_Restaurante.png" },
+        { id:249, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Playground',        src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed.Giovanni_Pav 300_Playground_1.png" },
+        { id:250, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Playground',        src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Ed.Giovanni_Pav 300_Playground_2.png" },
+        { id:251, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Piscina',           src:"assets/Ed. Frente_/Internas/Ed. Giovanni/VILLAGIO TOSCANO_GIOVANNI_PISCINA.png" },
+        { id:252, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Piscina',           src:"assets/Ed. Frente_/Internas/Ed. Giovanni/VILLAGIO TOSCANO_GIOVANNI_PISCINA_1.png" },
+        { id:253, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Piscina',           src:"assets/Ed. Frente_/Internas/Ed. Giovanni/VILLAGIO TOSCANO_GIOVANNI_PISCINA_3.png" },
+        { id:254, type:'image', category:'ed-frente', subCategory:'frente-giovanni', title:'Coworking',         src:"assets/Ed. Frente_/Internas/Ed. Giovanni/Villagio_toscano_Ed_Giovanni_Pav_200_Coworking.png" },
+
+        // ED. FRENTE — Ed. Lorenzo ────────────────────────────────────
+        { id:260, type:'image', category:'ed-frente', subCategory:'frente-lorenzo', title:'Átrio',              src:"assets/Ed. Frente_/Internas/Ed. Lorenzo/Ed. Lorenzo_ Atrio.png" },
+        { id:261, type:'image', category:'ed-frente', subCategory:'frente-lorenzo', title:'Átrio',              src:"assets/Ed. Frente_/Internas/Ed. Lorenzo/Ed. Lorenzo_ Atrio_2.png" },
+        { id:262, type:'image', category:'ed-frente', subCategory:'frente-lorenzo', title:'Térreo',             src:"assets/Ed. Frente_/Internas/Ed. Lorenzo/Ed. Lorenzo_ Terreo1.png" },
+        { id:263, type:'image', category:'ed-frente', subCategory:'frente-lorenzo', title:'Térreo',             src:"assets/Ed. Frente_/Internas/Ed. Lorenzo/Ed. Lorenzo_ Terreo2.png" },
+        { id:264, type:'image', category:'ed-frente', subCategory:'frente-lorenzo', title:'Apartamento 211',    src:"assets/Ed. Frente_/Internas/Ed. Lorenzo/Ed. Lorenzo_Apto 211_1.png" },
+        { id:265, type:'image', category:'ed-frente', subCategory:'frente-lorenzo', title:'Apartamento 211',    src:"assets/Ed. Frente_/Internas/Ed. Lorenzo/Ed. Lorenzo_Apto 211_2.png" },
+        { id:266, type:'image', category:'ed-frente', subCategory:'frente-lorenzo', title:'Apto 213 — Social',  src:"assets/Ed. Frente_/Internas/Ed. Lorenzo/Ed.Lorenzo_Apto 213_Área social.png" },
+        { id:267, type:'image', category:'ed-frente', subCategory:'frente-lorenzo', title:'Apto 213 — Dorm.',   src:"assets/Ed. Frente_/Internas/Ed. Lorenzo/Ed.Lorenzo_Apto 213_Dormitório.png" },
+
+        // ED. FRENTE — Plantas ────────────────────────────────────────
+        { id:270, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Francesco — Apto Tipo',  src:"assets/Ed. Frente_/Plantas Baixas/Ed. Francesco_apto tipo.png" },
+        { id:271, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Francesco — Térreo',     src:"assets/Ed. Frente_/Plantas Baixas/Ed. Francesco_Térreo.png" },
+        { id:272, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Lorenzo — Pav. Tipo',    src:"assets/Ed. Frente_/Plantas Baixas/Ed. Lorenzo_Pavtipo.png" },
+        { id:273, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Giovanni — 15º Pav.',    src:"assets/Ed. Frente_/Plantas Baixas/Ed.Giovanni_15pav.png" },
+        { id:274, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Giovanni — 16º Pav.',    src:"assets/Ed. Frente_/Plantas Baixas/Ed.Giovanni_16pav.png" },
+        { id:275, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Giovanni — 2º Pav.',     src:"assets/Ed. Frente_/Plantas Baixas/Ed.Giovanni_2pav.png" },
+        { id:276, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Giovanni — 3º Pav.',     src:"assets/Ed. Frente_/Plantas Baixas/Ed.Giovanni_3pav.png" },
+        { id:277, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Giovanni — 4º Pav.',     src:"assets/Ed. Frente_/Plantas Baixas/Ed.Giovanni_4pav.png" },
+        { id:278, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Giovanni — 5º Pav.',     src:"assets/Ed. Frente_/Plantas Baixas/Ed.Giovanni_5pav.png" },
+        { id:279, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Giovanni — Térreo',      src:"assets/Ed. Frente_/Plantas Baixas/Ed.Giovanni_Térreo.png" },
+        { id:280, type:'image', category:'ed-frente', subCategory:'frente-plantas', isPlant:true, title:'Lorenzo — Térreo',       src:"assets/Ed. Frente_/Plantas Baixas/Ed.Lorenzo_Térreo.png" },
+
+        // ED. BELLINI — Externas ──────────────────────────────────────
+        { id:300, type:'image', category:'ed-bellini', subCategory:'bellini-externas', title:'Fachada',           src:"assets/Ed. Bellini_/Externas/VILLAGIOTOSCANO_EXTERNO_BELLINI.png" },
+        { id:301, type:'image', category:'ed-bellini', subCategory:'bellini-externas', title:'Fachada Fim de Dia',src:"assets/Ed. Bellini_/Externas/VILLAGIOTOSCANO_EXTERNO_BELLINI_FIMDODIA2.png" },
+        { id:302, type:'image', category:'ed-bellini', subCategory:'bellini-externas', title:'Fachada Noite',     src:"assets/Ed. Bellini_/Externas/VILLAGIOTOSCANO_EXTERNO_BELLINI_NOITE.png" },
+
+        // ED. BELLINI — Fachada ───────────────────────────────────────
+        { id:310, type:'image', category:'ed-bellini', subCategory:'bellini-fachada', title:'Lateral Direita',    src:"assets/Ed. Bellini_/Fachada/Ed. Bellini lateral direita.png" },
+        { id:311, type:'image', category:'ed-bellini', subCategory:'bellini-fachada', title:'Fundos',             src:"assets/Ed. Bellini_/Fachada/Ed. Bellini_ fundos.png" },
+        { id:312, type:'image', category:'ed-bellini', subCategory:'bellini-fachada', title:'Lateral Esquerda',   src:"assets/Ed. Bellini_/Fachada/Ed.Bellini_lateralesquerda.png" },
+        { id:313, type:'image', category:'ed-bellini', subCategory:'bellini-fachada', title:'Fachada Frontal',    src:"assets/Ed. Bellini_/Fachada/Ed_Bellini_fachada frontal.png" },
+
+        // ED. BELLINI — Internas ──────────────────────────────────────
+        { id:320, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Apto 502',          src:"assets/Ed. Bellini_/Internas_/Ed.Bellini 502.png" },
+        { id:321, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Apto 102',          src:"assets/Ed. Bellini_/Internas_/Ed.Bellini_Apto102 - 2.png" },
+        { id:322, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Apto 102',          src:"assets/Ed. Bellini_/Internas_/Ed.Bellini_Apto102.png" },
+        { id:323, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Apartamento',       src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI APTO1.png" },
+        { id:324, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Apartamento',       src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI APTO4.png" },
+        { id:325, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Átrio',             src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI atrio1.png" },
+        { id:326, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Átrio',             src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI atrio3.png" },
+        { id:327, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Piscina',           src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI pIscina 2.png" },
+        { id:328, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Piscina',           src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI pIscina.png" },
+        { id:329, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Academia',          src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_ACADEMIA.png" },
+        { id:330, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Adega',             src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_ADEGA.png" },
+        { id:331, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Coworking',         src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_COWORKING.png" },
+        { id:332, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Entrada',           src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_ENTRADA.png" },
+        { id:333, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Espaço Pet',        src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_ESPAÇOPET.png" },
+        { id:334, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Hall de Entrada',   src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_HALLDEENTRADA.png" },
+        { id:335, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Lavanderia',        src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_LAVANDERIA.png" },
+        { id:336, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Maleiro',           src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_MALEIRO.png" },
+        { id:337, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Mercado',           src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_MERCADO.png" },
+        { id:338, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Oficina',           src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_OFICINA.png" },
+        { id:339, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Pet Care',          src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_petcare.png" },
+        { id:340, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Salão de Festas',   src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_SALAODEFESTAS.png" },
+        { id:341, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Vestiário Fem.',    src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_VESTIARIOFEMININO.png" },
+        { id:342, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Vestiário Masc.',   src:"assets/Ed. Bellini_/Internas_/VILLAGIO TOSCANO_BELLINI_VESTIARIOMASCULINO.png" },
+        { id:343, type:'image', category:'ed-bellini', subCategory:'bellini-internas', title:'Brinquedoteca',     src:"assets/Ed. Bellini_/Internas_/VILLAGIOTOSCANO_ED.BELLINI_BRINQUEDOTECA.png" },
+
+        // ED. BELLINI — Plantas ───────────────────────────────────────
+        { id:350, type:'image', category:'ed-bellini', subCategory:'bellini-plantas', isPlant:true, title:'2º Pavimento',   src:"assets/Ed. Bellini_/Plantas Baixas/Ed.Bellini_2pav.png" },
+        { id:351, type:'image', category:'ed-bellini', subCategory:'bellini-plantas', isPlant:true, title:'Apto Tipo 02',   src:"assets/Ed. Bellini_/Plantas Baixas/Ed.Bellini_Aptotipo02.png" },
+        { id:352, type:'image', category:'ed-bellini', subCategory:'bellini-plantas', isPlant:true, title:'Apto Tipo 03',   src:"assets/Ed. Bellini_/Plantas Baixas/Ed.Bellini_Aptotipo03.png" },
+        { id:353, type:'image', category:'ed-bellini', subCategory:'bellini-plantas', isPlant:true, title:'Pav. Tipo',      src:"assets/Ed. Bellini_/Plantas Baixas/Ed.Bellini_Pavtipo.png" },
+        { id:354, type:'image', category:'ed-bellini', subCategory:'bellini-plantas', isPlant:true, title:'Subsolo 01',     src:"assets/Ed. Bellini_/Plantas Baixas/Ed.Bellini_Subsolo 01.png" },
+        { id:355, type:'image', category:'ed-bellini', subCategory:'bellini-plantas', isPlant:true, title:'Subsolo 02',     src:"assets/Ed. Bellini_/Plantas Baixas/Ed.Bellini_Subsolo 02.png" },
+        { id:356, type:'image', category:'ed-bellini', subCategory:'bellini-plantas', isPlant:true, title:'Sub-Telhado',    src:"assets/Ed. Bellini_/Plantas Baixas/Ed.Bellini_Subtelhado.png" },
+        { id:357, type:'image', category:'ed-bellini', subCategory:'bellini-plantas', isPlant:true, title:'Térreo',         src:"assets/Ed. Bellini_/Plantas Baixas/Ed.Bellini_Térreo.png" },
+
+        // ED. CASTELLI — Externas ─────────────────────────────────────
+        { id:400, type:'image', category:'ed-castelli', subCategory:'castelli-externas', title:'Fachada Neblina',  src:"assets/Ed. Castelli/Externas/VILLAGIO TOSCANO_EXTERNO_NEBLINA_CASTELLI_01.png" },
+        { id:401, type:'image', category:'ed-castelli', subCategory:'castelli-externas', title:'Fachada',          src:"assets/Ed. Castelli/Externas/VILLAGIOTOSCANO_EXTERNO_CASTELLI.png" },
+        { id:402, type:'image', category:'ed-castelli', subCategory:'castelli-externas', title:'Fachada Fim de Dia',src:"assets/Ed. Castelli/Externas/VILLAGIOTOSCANO_EXTERNO_CASTELLI_FIM DO DIA.png" },
+
+        // ED. CASTELLI — Internas ─────────────────────────────────────
+        { id:410, type:'image', category:'ed-castelli', subCategory:'castelli-internas', title:'Átrio Bolzano',    src:"assets/Ed. Castelli/Internas_/Ed.Castelli_Átrio Bolzano.png" },
+        { id:411, type:'image', category:'ed-castelli', subCategory:'castelli-internas', title:'Átrio Bolzano',    src:"assets/Ed. Castelli/Internas_/Ed.Castelli_Átrio Bolzano_1.png" },
+        { id:412, type:'image', category:'ed-castelli', subCategory:'castelli-internas', title:'Coworking',        src:"assets/Ed. Castelli/Internas_/Ed.Castelli_coworking.png" },
+        { id:413, type:'image', category:'ed-castelli', subCategory:'castelli-internas', title:'Coworking',        src:"assets/Ed. Castelli/Internas_/Ed.Castelli_coworking2.png" },
+        { id:414, type:'image', category:'ed-castelli', subCategory:'castelli-internas', title:'Salão de Festas',  src:"assets/Ed. Castelli/Internas_/Ed.Castelli_salaodefestas.png" },
+        { id:415, type:'image', category:'ed-castelli', subCategory:'castelli-internas', title:'Wine Bar',         src:"assets/Ed. Castelli/Internas_/Ed.Castelli_winebar.png" },
+        { id:416, type:'image', category:'ed-castelli', subCategory:'castelli-internas', title:'Wine Bar',         src:"assets/Ed. Castelli/Internas_/Ed.Castelli_winebar2.png" },
+        { id:417, type:'image', category:'ed-castelli', subCategory:'castelli-internas', title:'Wine Bar',         src:"assets/Ed. Castelli/Internas_/Ed.Castelli_winebar3.png" },
+
+        // ED. FERRARA — Externas ──────────────────────────────────────
+        { id:500, type:'image', category:'ed-ferrara', subCategory:'ferrara-externas', title:'Fachada Neblina',    src:"assets/Ed. Ferrara/Externas/VILLAGIO TOSCANO_EXTERNO_NEBLINA_FERRARA_01.png" },
+        { id:501, type:'image', category:'ed-ferrara', subCategory:'ferrara-externas', title:'Fachada',            src:"assets/Ed. Ferrara/Externas/VILLAGIOTOSCANO_EXTERNO_FERRARA.png" },
+        { id:502, type:'image', category:'ed-ferrara', subCategory:'ferrara-externas', title:'Fachada Fim de Dia', src:"assets/Ed. Ferrara/Externas/VILLAGIOTOSCANO_EXTERNO_FERRARA_FIM DE DIA.png" },
+        { id:503, type:'image', category:'ed-ferrara', subCategory:'ferrara-externas', title:'Fachada Noite',      src:"assets/Ed. Ferrara/Externas/VILLAGIOTOSCANO_EXTERNO_FERRARA_NOITE.png" },
+
+        // ED. FERRARA — Internas ──────────────────────────────────────
+        { id:510, type:'image', category:'ed-ferrara', subCategory:'ferrara-internas', title:'Átrio Veneza',       src:"assets/Ed. Ferrara/Internas/Ed.Ferrara_Átrio Ferrara_Veneza_2.png" },
+        { id:511, type:'image', category:'ed-ferrara', subCategory:'ferrara-internas', title:'Átrio Veneza',       src:"assets/Ed. Ferrara/Internas/Ed.Ferrara_Átrio Ferrara_Veneza_3.png" },
+        { id:512, type:'image', category:'ed-ferrara', subCategory:'ferrara-internas', title:'Átrio Verona',       src:"assets/Ed. Ferrara/Internas/Ed.Ferrara_Átrio Ferrara_Verona.png" },
+
+        // ED. MILANI — Externas ───────────────────────────────────────
+        { id:600, type:'image', category:'ed-milani', subCategory:'milani-externas', title:'Fachada Neblina',      src:"assets/Ed. Milani_/Externas/VILLAGIO TOSCANO_EXTERNO_NEBLINA_MILANI_01.png" },
+        { id:601, type:'image', category:'ed-milani', subCategory:'milani-externas', title:'Fachada',              src:"assets/Ed. Milani_/Externas/VILLAGIOTOSCANO_EXTERNO_MILANI.png" },
+        { id:602, type:'image', category:'ed-milani', subCategory:'milani-externas', title:'Fachada Fim de Dia',   src:"assets/Ed. Milani_/Externas/VILLAGIOTOSCANO_EXTERNO_MILANI_FIM DE DIA.png" },
+        { id:603, type:'image', category:'ed-milani', subCategory:'milani-externas', title:'Fachada Noite',        src:"assets/Ed. Milani_/Externas/VILLAGIOTOSCANO_EXTERNO_MILANI_NOITE.png" },
+
+        // ED. MILANI — Interna ────────────────────────────────────────
+        { id:610, type:'image', category:'ed-milani', subCategory:'milani-interna', title:'Átrio Bologna',         src:"assets/Ed. Milani_/Interna/Ed.Milani_Átrio Milani_Bologna.png" },
+        { id:611, type:'image', category:'ed-milani', subCategory:'milani-interna', title:'Átrio Parma',           src:"assets/Ed. Milani_/Interna/Ed.Milani_Átrio Milani_Parma.png" },
+
+        // ED. SAVOIA — Externas ───────────────────────────────────────
+        { id:700, type:'image', category:'ed-savoia', subCategory:'savoia-externas', title:'Fachada Neblina',      src:"assets/Ed. Savoia/Externas/VILLAGIO TOSCANO_EXTERNO_NEBLINA_SAVOIA_01.png" },
+        { id:701, type:'image', category:'ed-savoia', subCategory:'savoia-externas', title:'Fachada Fim de Dia',   src:"assets/Ed. Savoia/Externas/VILLAGIO TOSCANO_EXTERNO_SAVOIA_FIM DE DIA.png" },
+        { id:702, type:'image', category:'ed-savoia', subCategory:'savoia-externas', title:'Fachada',              src:"assets/Ed. Savoia/Externas/VILLAGIOTOSCANO_EXTERNO_SAVOIA.png" },
+        { id:703, type:'image', category:'ed-savoia', subCategory:'savoia-externas', title:'Fachada Noite',        src:"assets/Ed. Savoia/Externas/VILLAGIOTOSCANO_EXTERNO_SAVOIA_NOITE.png" },
+
+        // ED. SAVOIA — Internas ───────────────────────────────────────
+        { id:710, type:'image', category:'ed-savoia', subCategory:'savoia-internas', title:'Fontana di Trevi',     src:"assets/Ed. Savoia/Internas/Ed.Savoia_Átrio Savoia_Fontana di Trévi.png" },
+        { id:711, type:'image', category:'ed-savoia', subCategory:'savoia-internas', title:'Fontana di Trevi',     src:"assets/Ed. Savoia/Internas/Ed.Savoia_Átrio Savoia_Fontana di Trévi_ (3).png" },
+        { id:712, type:'image', category:'ed-savoia', subCategory:'savoia-internas', title:'São Pedro',            src:"assets/Ed. Savoia/Internas/Ed.Savoia_Átrio Savoia_São pedro.png" },
+
+        // ED. VITALLE — Externas ──────────────────────────────────────
+        { id:800, type:'image', category:'ed-vitalle', subCategory:'vitalle-externas', title:'Fachada Neblina',    src:"assets/Ed. Vitalle/Externas/VILLAGIO TOSCANO_EXTERNO_NEBLINA_VITALE_02.png" },
+        { id:801, type:'image', category:'ed-vitalle', subCategory:'vitalle-externas', title:'Fachada',            src:"assets/Ed. Vitalle/Externas/VILLAGIOTOSCANO_EXTERNO_VITALE.png" },
+        { id:802, type:'image', category:'ed-vitalle', subCategory:'vitalle-externas', title:'Fachada Fim de Dia', src:"assets/Ed. Vitalle/Externas/VILLAGIOTOSCANO_EXTERNO_VITALE_FIM DE DIA.png" },
+        { id:803, type:'image', category:'ed-vitalle', subCategory:'vitalle-externas', title:'Fachada Noite',      src:"assets/Ed. Vitalle/Externas/VILLAGIOTOSCANO_EXTERNO_VITALE_NOITE.png" },
+
+        // ED. VITALLE — Internas ──────────────────────────────────────
+        { id:810, type:'image', category:'ed-vitalle', subCategory:'vitalle-internas', title:'Átrio Catânia',      src:"assets/Ed. Vitalle/Internas/Ed.Vitalle_Átrio Vitalle_Catânia.png" },
+        { id:811, type:'image', category:'ed-vitalle', subCategory:'vitalle-internas', title:'Átrio Palermo',      src:"assets/Ed. Vitalle/Internas/Ed.Vitalle_Átrio Vitalle_Palermo.png" },
+      ],
+    };
+
+    // ================================================================
+    // ENGINE
+    // ================================================================
+    const st = {
+      cat: 'all',
+      sub: null,
+      lbItems: [],
+      lbIdx: -1,
+      lbDual: false,
+    };
+
+    const $ = id => document.getElementById(id);
+
+    const elFilterMain = $('filter-main');
+    const elFilterSub = $('filter-sub');
+    const elFilterSubIn = $('filter-sub-inner');
+    const elGrid = $('g-grid');
+    const elEmpty = $('g-empty');
+    const elLightbox = $('lightbox');
+    const elLbImg = $('lb-img');
+    const elLbDual = $('lb-dual');
+    const elLbTitle = $('lb-title');
+    const elLbSub = $('lb-sub');
+    const elLbCounter = $('lb-counter');
+    const elLbNotice = $('lb-notice');
+    const elLbPrev = $('lb-prev');
+    const elLbNext = $('lb-next');
+
+    // ── modo: 'imagens' | 'plantas' | 'all' ──────────────────────────
+    const MODE = (() => {
+      try {
+        const m = new URLSearchParams(window.location.search).get('mode') || 'all';
+        return ['all', 'imagens', 'plantas'].includes(m) ? m : 'all';
+      } catch (_) { return 'all'; }
+    })();
+
+    const DISPLAY_CATS = (() => {
+      const BUILDING_IDS = ['ed-frente','ed-bellini','ed-castelli','ed-ferrara','ed-milani','ed-savoia','ed-vitalle'];
+      if (MODE === 'imagens') return GALLERY_CONFIG.categories.filter(c => BUILDING_IDS.includes(c.id) || c.id === 'aereas');
+      if (MODE === 'plantas') return GALLERY_CONFIG.categories.filter(c => BUILDING_IDS.includes(c.id) || c.id === 'percurso');
+      return GALLERY_CONFIG.categories;
+    })();
+
+    // ── helpers ──────────────────────────────────────────────────────
+    function getCat(id) { return GALLERY_CONFIG.categories.find(c => c.id === id); }
+    function getSubLabel(catId, subId) {
+      const cat = getCat(catId);
+      if (!cat || !cat.subs) return '';
+      const s = cat.subs.find(s => s.id === subId);
+      return s ? s.label : '';
+    }
+
+    // ── filters ──────────────────────────────────────────────────────
+    function renderMainFilters() {
+      elFilterMain.innerHTML = '';
+      DISPLAY_CATS.forEach(cat => {
+        const b = document.createElement('button');
+        b.className = 'f-btn' + (cat.id === st.cat ? ' active' : '');
+        b.textContent = cat.label;
+        b.addEventListener('click', () => {
+          if (cat.id === st.cat) return;
+          st.cat = cat.id; st.sub = null;
+          renderMainFilters(); renderSubFilters(); renderGallery();
+        });
+        elFilterMain.appendChild(b);
+      });
+    }
+
+    function renderSubFilters() {
+      const cat = getCat(st.cat);
+      if (cat && cat.subs && cat.subs.length) {
+        elFilterSubIn.innerHTML = '';
+        const addSub = (id, label) => {
+          const b = document.createElement('button');
+          b.className = 'sf-btn' + (st.sub === id ? ' active' : '');
+          b.textContent = label;
+          b.addEventListener('click', () => {
+            if (st.sub === id) return;
+            st.sub = id;
+            renderSubFilters(); renderGallery();
+          });
+          elFilterSubIn.appendChild(b);
+        };
+        cat.subs.forEach(s => addSub(s.id, s.label));
+        elFilterSub.classList.add('open');
+      } else {
+        elFilterSub.classList.remove('open');
+      }
+    }
+
+    // ── gallery ──────────────────────────────────────────────────────
+    function filteredItems() {
+      return GALLERY_CONFIG.items.filter(item => {
+        if (MODE === 'plantas') {
+          if (item.category !== 'plantas') return false;
+          if (st.cat && item.subCategory !== st.cat) return false;
+          return true;
+        }
+        if (st.cat && st.cat !== 'all' && item.category !== st.cat) return false;
+        if (st.sub && item.subCategory !== st.sub) return false;
+        return true;
+      });
+    }
+
+    function renderGallery() {
+      const items = filteredItems();
+      const existing = elGrid.querySelectorAll('.g-card');
+
+      const doRender = () => {
+        elGrid.innerHTML = '';
+        elEmpty.classList.remove('show');
+        st.lbItems = items.filter(i => i.type === 'image');
+        if (!items.length) { elEmpty.classList.add('show'); return; }
+        items.forEach((item, i) => {
+          const card = item.type === 'cobertura-plan'
+            ? buildCobCard(item)
+            : buildImgCard(item);
+          card.style.animationDelay = Math.min(i * 0.04, 0.5) + 's';
+          elGrid.appendChild(card);
+        });
+      };
+
+      if (existing.length) {
+        existing.forEach(c => { c.style.animation = 'cardOut 0.18s ease forwards'; });
+        setTimeout(doRender, 165);
+      } else {
+        doRender();
+      }
+    }
+
+    // inject cardOut keyframe once
+    (function () {
+      const s = document.createElement('style');
+      s.textContent = '@keyframes cardOut{to{opacity:0;transform:scale(0.97)}}';
+      document.head.appendChild(s);
+    }());
+
+    function buildImgCard(item) {
+      const card = document.createElement('div');
+      card.className = 'g-card' + (item.isPlant ? ' is-plant' : '');
+
+      const img = document.createElement('img');
+      img.src = item.thumb || item.src;
+      img.alt = item.title;
+      img.loading = 'lazy';
+      img.addEventListener('load', () => card.classList.add('loaded'));
+      img.addEventListener('error', () => card.classList.add('loaded'));
+      if (img.complete) card.classList.add('loaded');
+
+      const ov = document.createElement('div');
+      ov.className = 'card-overlay';
+      ov.innerHTML = `<div class="card-title">${item.title}</div>` +
+        (item.subCategory ? `<div class="card-sub">${getSubLabel(item.category, item.subCategory)}</div>` : '');
+
+      const zoom = document.createElement('div');
+      zoom.className = 'card-zoom';
+      zoom.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>`;
+
+      card.appendChild(img);
+      card.appendChild(ov);
+      card.appendChild(zoom);
+      card.addEventListener('click', () => openLb(item));
+      return card;
+    }
+
+    function buildCobCard(item) {
+      const card = document.createElement('div');
+      card.className = 'g-card cob-card';
+
+      // Header
+      const hdr = document.createElement('div');
+      hdr.className = 'cob-header';
+
+      const tg = document.createElement('div');
+      tg.innerHTML = `<div class="cob-badge">${item.title}</div>
+    <div class="cob-name">${item.title}</div>
+    ${item.area ? `<div class="cob-area">${item.area}</div>` : ''}`;
+
+      const tabs = document.createElement('div');
+      tabs.className = 'floor-tabs';
+
+      hdr.appendChild(tg);
+      hdr.appendChild(tabs);
+
+      // Body
+      const body = document.createElement('div');
+      body.className = 'cob-body';
+
+      // skeleton overlay for cob body
+      const skel = document.createElement('div');
+      skel.className = 'floor-skeleton';
+      body.appendChild(skel);
+
+      let loadedCount = 0;
+      item.floors.forEach((floor, fi) => {
+        // tab
+        const tab = document.createElement('button');
+        tab.className = 'floor-tab' + (fi === 0 ? ' active' : '');
+        tab.textContent = floor.label;
+        tab.addEventListener('click', () => {
+          tabs.querySelectorAll('.floor-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          body.querySelectorAll('.floor-wrap').forEach((w, wi) => w.classList.toggle('active', wi === fi));
+        });
+        tabs.appendChild(tab);
+
+        // image wrap
+        const wrap = document.createElement('div');
+        wrap.className = 'floor-wrap' + (fi === 0 ? ' active' : '');
+
+        const img = document.createElement('img');
+        img.src = floor.thumb || floor.src;
+        img.alt = floor.label;
+        img.loading = 'lazy';
+        img.addEventListener('click', () => openLbFloor(item, fi));
+        const onImgLoad = () => {
+          img.classList.add('loaded');
+          loadedCount++;
+          if (loadedCount >= item.floors.length) body.classList.add('loaded');
+        };
+        img.addEventListener('load', onImgLoad);
+        img.addEventListener('error', onImgLoad);
+        if (img.complete) onImgLoad();
+
+        const lbl = document.createElement('div');
+        lbl.className = 'floor-lbl';
+        lbl.textContent = floor.label;
+
+        wrap.appendChild(img);
+        wrap.appendChild(lbl);
+        body.appendChild(wrap);
+      });
+
+      // Footer
+      const foot = document.createElement('div');
+      foot.className = 'cob-footer';
+      const btn = document.createElement('button');
+      btn.className = 'btn-see-both';
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13">
+    <rect x="3" y="3" width="7" height="7" rx="1"/>
+    <rect x="14" y="3" width="7" height="7" rx="1"/>
+    <rect x="3" y="14" width="7" height="7" rx="1"/>
+    <rect x="14" y="14" width="7" height="7" rx="1"/>
+  </svg>Ver ambos os pavimentos`;
+      btn.addEventListener('click', () => openLbDual(item));
+      foot.appendChild(btn);
+
+      card.appendChild(hdr);
+      card.appendChild(body);
+      card.appendChild(foot);
+      return card;
+    }
+
+    // ── lightbox ─────────────────────────────────────────────────────
+    function showLb() {
+      elLightbox.classList.add('open');
+      document.addEventListener('keydown', onLbKey);
+    }
+
+    function openLb(item) {
+      st.lbIdx = st.lbItems.findIndex(i => i.id === item.id);
+      st.lbDual = false;
+      elLbDual.classList.remove('show');
+      elLbImg.style.display = '';
+      elLbPrev.style.display = '';
+      elLbNext.style.display = '';
+      updateLb();
+      showLb();
+    }
+
+    function openLbFloor(item, fi) {
+      st.lbDual = false;
+      elLbDual.classList.remove('show');
+      elLbImg.style.display = '';
+      elLbPrev.style.display = 'none';
+      elLbNext.style.display = 'none';
+      elLbImg.src = item.floors[fi].src;
+      elLbTitle.textContent = item.title;
+      elLbSub.textContent = item.floors[fi].label;
+      elLbCounter.textContent = '';
+      elLbNotice.textContent = 'As plantas pertencem à mesma unidade';
+      showLb();
+    }
+
+    function openLbDual(item) {
+      st.lbDual = true;
+      elLbImg.style.display = 'none';
+      elLbPrev.style.display = 'none';
+      elLbNext.style.display = 'none';
+      elLbDual.classList.add('show');
+
+      const dcA = $('dc-a'), dcB = $('dc-b');
+      dcA.querySelector('.dual-lbl').textContent = item.floors[0].label;
+      dcA.querySelector('img').src = item.floors[0].src;
+      dcB.querySelector('.dual-lbl').textContent = item.floors[1].label;
+      dcB.querySelector('img').src = item.floors[1].src;
+
+      elLbTitle.textContent = item.title;
+      elLbSub.textContent = item.area || '';
+      elLbCounter.textContent = 'Cobertura Duplex';
+      elLbNotice.textContent = 'Ambas as plantas pertencem à mesma unidade';
+      showLb();
+    }
+
+    function closeLb() {
+      elLightbox.classList.remove('open');
+      document.removeEventListener('keydown', onLbKey);
+      if (window._lbResetZoom) window._lbResetZoom();
+      setTimeout(() => {
+        elLbImg.style.display = '';
+        elLbPrev.style.display = '';
+        elLbNext.style.display = '';
+        elLbDual.classList.remove('show');
+      }, 300);
+    }
+
+    function updateLb() {
+      const item = st.lbItems[st.lbIdx];
+      if (!item) return;
+      elLbImg.style.opacity = '0';
+      setTimeout(() => { elLbImg.src = item.src; elLbImg.style.opacity = '1'; }, 120);
+      elLbTitle.textContent = item.title;
+      elLbSub.textContent = item.subCategory ? getSubLabel(item.category, item.subCategory) : '';
+      elLbCounter.textContent = (st.lbIdx + 1) + ' / ' + st.lbItems.length;
+      elLbNotice.textContent = '';
+      elLbPrev.disabled = st.lbIdx === 0;
+      elLbNext.disabled = st.lbIdx === st.lbItems.length - 1;
+    }
+
+    function navLb(dir) {
+      if (st.lbDual) return;
+      const ni = st.lbIdx + dir;
+      if (ni < 0 || ni >= st.lbItems.length) return;
+      st.lbIdx = ni;
+      if (window._lbResetZoom) window._lbResetZoom();
+      updateLb();
+    }
+
+    function onLbKey(e) {
+      if (e.key === 'Escape') closeLb();
+      if (e.key === 'ArrowLeft') navLb(-1);
+      if (e.key === 'ArrowRight') navLb(1);
+    }
+
+    // ── 3DVista close communication ───────────────────────────────────
+    function closeGallery() {
+      if (window.parent !== window) {
+        window.parent.postMessage({ action: 'closeGallery' }, '*');
+      }
+    }
+
+    // ── init ──────────────────────────────────────────────────────────
+    function init() {
+      if (MODE === 'imagens' && DISPLAY_CATS.length) st.cat = DISPLAY_CATS[0].id;
+      else if (MODE === 'plantas' && DISPLAY_CATS.length) st.cat = DISPLAY_CATS[0].id;
+      else if (DISPLAY_CATS.length) st.cat = DISPLAY_CATS[0].id;
+
+      renderMainFilters();
+      renderSubFilters();
+      renderGallery();
+
+      $('btn-close').addEventListener('click', closeGallery);
+      $('lb-close').addEventListener('click', closeLb);
+      elLbPrev.addEventListener('click', () => navLb(-1));
+      elLbNext.addEventListener('click', () => navLb(1));
+      $('lb-body').addEventListener('click', e => { if (e.target === $('lb-body')) closeLb(); });
+    }
+
+    // ── zoom + pan in lightbox ───────────────────────────────────────
+    (function () {
+      const img = document.getElementById('lb-img');
+      const body = document.getElementById('lb-body');
+      const btnIn = document.getElementById('lb-zoom-in');
+      const btnOut = document.getElementById('lb-zoom-out');
+      const lblLevel = document.getElementById('lb-zoom-level');
+
+      const MIN = 1, MAX = 5;
+      let z = 1, px = 0, py = 0;
+      let dragging = false, dragX = 0, dragY = 0, basePx = 0, basePy = 0;
+      let pinchDist = null, touchX = 0, touchY = 0, touchPrevX = 0, touchPrevY = 0;
+
+      function applyTransform(smooth) {
+        img.style.transition = smooth ? 'transform 0.18s ease-out' : 'none';
+        img.style.transform = (z === 1 && px === 0 && py === 0)
+          ? '' : `translate(${px}px,${py}px) scale(${z})`;
+        img.classList.toggle('zoomed', z > 1);
+        lblLevel.textContent = Math.round(z * 100) + '%';
+        btnOut.disabled = z <= MIN;
+        btnIn.disabled = z >= MAX;
+      }
+
+      function resetZoom() {
+        z = 1; px = 0; py = 0;
+        img.classList.remove('zoomed', 'dragging');
+        applyTransform(true);
+      }
+
+      function zoomAt(dz, clientX, clientY, smooth) {
+        const nz = Math.min(Math.max(z + dz, MIN), MAX);
+        if (nz === z) return;
+        const r = img.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        px += (clientX - cx) * (1 - nz / z);
+        py += (clientY - cy) * (1 - nz / z);
+        z = nz;
+        applyTransform(!!smooth);
+      }
+
+      function bodyCenter() {
+        const r = body.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      }
+
+      btnIn.addEventListener('click', () => { const c = bodyCenter(); zoomAt(+0.5, c.x, c.y, true); });
+      btnOut.addEventListener('click', () => { const c = bodyCenter(); zoomAt(-0.5, c.x, c.y, true); });
+
+      img.addEventListener('dblclick', e => {
+        e.stopPropagation();
+        if (z > 1) resetZoom(); else zoomAt(+2, e.clientX, e.clientY, true);
+      });
+
+      let wheelRaf = null;
+      body.addEventListener('wheel', e => {
+        if (!document.getElementById('lightbox').classList.contains('open')) return;
+        if (document.getElementById('lb-dual').classList.contains('show')) return;
+        e.preventDefault();
+        const dz = e.deltaY < 0 ? 0.25 : -0.25;
+        if (wheelRaf) cancelAnimationFrame(wheelRaf);
+        wheelRaf = requestAnimationFrame(() => {
+          zoomAt(dz, e.clientX, e.clientY, false);
+          wheelRaf = null;
+        });
+      }, { passive: false });
+
+      img.addEventListener('mousedown', e => {
+        if (z <= 1) return;
+        e.preventDefault();
+        dragging = true;
+        dragX = e.clientX; dragY = e.clientY;
+        basePx = px; basePy = py;
+        img.classList.add('dragging');
+      });
+      window.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        px = basePx + (e.clientX - dragX);
+        py = basePy + (e.clientY - dragY);
+        applyTransform(false);
+      });
+      window.addEventListener('mouseup', () => {
+        if (!dragging) return;
+        dragging = false;
+        img.classList.remove('dragging');
+      });
+
+      body.addEventListener('touchstart', e => {
+        if (e.touches.length === 2) {
+          pinchDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+        } else {
+          pinchDist = null;
+          touchX = touchPrevX = e.touches[0].clientX;
+          touchY = touchPrevY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      body.addEventListener('touchmove', e => {
+        if (e.touches.length === 2 && pinchDist !== null) {
+          e.preventDefault();
+          const d = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          zoomAt((d - pinchDist) * 0.018, cx, cy, false);
+          pinchDist = d;
+        } else if (e.touches.length === 1 && z > 1) {
+          e.preventDefault();
+          px += e.touches[0].clientX - touchPrevX;
+          py += e.touches[0].clientY - touchPrevY;
+          touchPrevX = e.touches[0].clientX;
+          touchPrevY = e.touches[0].clientY;
+          applyTransform(false);
+        }
+      }, { passive: false });
+
+      body.addEventListener('touchend', e => {
+        if (pinchDist !== null) { pinchDist = null; return; }
+        if (z > 1) return;
+        const dx = e.changedTouches[0].clientX - touchX;
+        const dy = e.changedTouches[0].clientY - touchY;
+        if (Math.abs(dx) > 40 && Math.abs(dy) < 40) navLb(dx < 0 ? 1 : -1);
+      }, { passive: true });
+
+      window._lbResetZoom = resetZoom;
+      applyTransform(false);
+    }());
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+
+</html>
