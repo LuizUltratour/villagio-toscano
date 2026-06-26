@@ -1489,7 +1489,8 @@
         b.textContent = cat.label;
         b.addEventListener('click', () => {
           if (cat.id === st.cat) return;
-          st.cat = cat.id; st.sub = null;
+          st.cat = cat.id;
+          st.sub = (cat.subs && cat.subs.length) ? cat.subs[0].id : null;
           renderMainFilters(); renderSubFilters(); renderGallery();
         });
         elFilterMain.appendChild(b);
@@ -1781,9 +1782,9 @@
 
     // ── init ──────────────────────────────────────────────────────────
     function init() {
-      if (MODE === 'imagens' && DISPLAY_CATS.length) st.cat = DISPLAY_CATS[0].id;
-      else if (MODE === 'plantas' && DISPLAY_CATS.length) st.cat = DISPLAY_CATS[0].id;
-      else if (DISPLAY_CATS.length) st.cat = DISPLAY_CATS[0].id;
+      if (DISPLAY_CATS.length) st.cat = DISPLAY_CATS[0].id;
+      const initCat = getCat(st.cat);
+      st.sub = (initCat && initCat.subs && initCat.subs.length) ? initCat.subs[0].id : null;
 
       renderMainFilters();
       renderSubFilters();

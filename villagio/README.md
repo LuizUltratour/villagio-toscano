@@ -1,60 +1,99 @@
-# Galeria — WR DUO
+# Galeria — Villagio Toscano
 
 Galeria de imagens para injeção via script no 3DVista, hospedada no AWS S3.
+
+## Repositório
+
+```
+https://github.com/LuizUltratour/villagio-toscano
+```
 
 ## Arquivos
 
 | Arquivo | Descrição |
 |---------|-----------|
-| `index.html` | Galeria completa (auto-suficiente, vai dentro do iframe) |
+| `index.html` | Galeria completa (auto-suficiente, roda dentro de um iframe) |
 | `inject.js`  | Script leve que cria o overlay no 3DVista |
-| `assets/`    | Pasta com todas as imagens organizadas por categoria |
+| `assets/`    | Imagens organizadas por edifício e subcategoria |
 
 ---
 
 ## Estrutura de pastas (`assets/`)
 
-> A definir conforme organização do projeto WR DUO.
-
 ```
 assets/
-├── (categorias a definir)
-└── ...
+├── Implantação/
+├── Aéreas/
+│   ├── Imagens/
+│   └── Vídeos_/
+├── Percurso Toscano_/
+│   ├── Externas/
+│   ├── Internas/
+│   └── Planta Baixa_/
+├── Ed. Frente_/
+│   ├── Externas/
+│   ├── Internas/
+│   │   ├── Ed. Francesco_/
+│   │   ├── Ed. Giovanni/
+│   │   └── Ed. Lorenzo/
+│   └── Plantas Baixas/
+├── Ed. Bellini_/
+│   ├── Externas/
+│   ├── Fachada/
+│   ├── Internas_/
+│   └── Plantas Baixas/
+├── Ed. Castelli/
+│   ├── Externas/
+│   └── Internas_/
+├── Ed. Ferrara/
+│   ├── Externas/
+│   └── Internas/
+├── Ed. Milani_/
+│   ├── Externas/
+│   └── Interna/
+├── Ed. Savoia/
+│   ├── Externas/
+│   └── Internas/
+└── Ed. Vitalle/
+    ├── Externas/
+    └── Internas/
 ```
 
 ---
 
 ## Como funciona
 
-### Dois modos de galeria
+### Menu e filtros
 
-A galeria aceita um parâmetro `?mode=` na URL:
+O menu principal exibe uma categoria por edifício/área. Ao clicar em uma categoria, a primeira subcategoria (**Externas**) é automaticamente selecionada e marcada como ativa.
+
+| Categoria principal | Subcategorias |
+|--------------------|---------------|
+| Implantação | — |
+| Aéreas | — |
+| Percurso Toscano | Externas · Internas · Plantas |
+| Ed. Frente | Externas · Ed. Francesco · Ed. Giovanni · Ed. Lorenzo · Plantas |
+| Ed. Bellini | Externas · Fachada · Internas · Plantas |
+| Ed. Castelli | Externas · Internas |
+| Ed. Ferrara | Externas · Internas |
+| Ed. Milani | Externas · Interna |
+| Ed. Savoia | Externas · Internas |
+| Ed. Vitalle | Externas · Internas |
+
+### Modos via URL
 
 | Modo | URL | O que exibe |
 |------|-----|-------------|
-| `imagens` | `index.html?mode=imagens` | Categorias de imagens |
-| `plantas` | `index.html?mode=plantas` | Plantas por tipologia |
-| `all` | `index.html` | Tudo (uso local / testes) |
-
-### Filtros
-
-- **Modo imagens**: filtros principais = categorias de imagens. Categorias com sub-filtros por tipologia.
-- **Modo plantas**: filtros principais = tipologias. Cada filtro mostra as plantas daquela tipologia.
-- Sem botão "Todos" — galeria já abre filtrada na primeira categoria disponível.
-
-### Card duplex (cobertura-plan)
-
-Cards de plantas com dois pavimentos usam `type: 'cobertura-plan'`:
-- Abas **Pavimento Inferior / Pavimento Superior** para alternar
-- Label flutuante sobre a imagem indicando o pavimento
-- Botão **"Ver ambos os pavimentos"** abre lightbox lado a lado
+| `all` (padrão) | `index.html` | Todas as categorias |
+| `imagens` | `index.html?mode=imagens` | Edifícios + Aéreas |
+| `plantas` | `index.html?mode=plantas` | Edifícios + Percurso Toscano |
 
 ### Lightbox
 
 - Navegação por setas (desktop) ou swipe horizontal (mobile/touch)
 - Tecla `Esc` fecha; setas do teclado navegam
-- Dual-view no mobile empilha verticalmente
-- Zoom com scroll/pinch e pan com drag
+- Zoom com scroll/pinch e pan com drag (100% a 500%)
+- Plantas exibidas com fundo branco e `object-fit: contain`
 
 ### Responsividade
 
@@ -75,18 +114,13 @@ Abra `index.html` e edite o objeto `GALLERY_CONFIG`.
 
 ```js
 categories: [
-  { id: 'fachada', label: 'Fachada' },
-  { id: 'areas-comuns', label: 'Áreas Comuns' },
+  { id: 'implantacao', label: 'Implantação' },
   {
-    id: 'apartamentos', label: 'Apartamentos',
+    id: 'ed-bellini', label: 'Ed. Bellini',
     subs: [
-      { id: 'ap-tipologia-1', label: 'Tipologia 1' },
-    ]
-  },
-  {
-    id: 'plantas', label: 'Plantas',
-    subs: [
-      { id: 'pl-tipologia-1', label: 'Tipologia 1' },
+      { id: 'bellini-externas', label: 'Externas' },
+      { id: 'bellini-internas', label: 'Internas' },
+      { id: 'bellini-plantas',  label: 'Plantas' },
     ]
   },
 ],
@@ -95,19 +129,18 @@ categories: [
 ### Itens — imagem simples
 
 ```js
-{ id:1, type:'image', category:'fachada', title:'Fachada Principal',
-  src: 'assets/fachada/NOME-DO-ARQUIVO.jpg' },
+{ id:1, type:'image', category:'implantacao', isPlant:true,
+  title:'Implantação', src:'assets/Implantação/Implantação.png' },
 ```
 
-### Itens — planta com dois pavimentos
+### Itens — imagem com subcategoria
 
 ```js
-{ id:30, type:'cobertura-plan', category:'plantas', subCategory:'pl-tipologia-1',
-  title:'Tipologia 1', area:'', floors:[
-    { label:'Pavimento Inferior', src:'assets/plantas/tipologia-1/1/PAVIMENTO INFERIOR.jpg' },
-    { label:'Pavimento Superior', src:'assets/plantas/tipologia-1/1/PAVIMENTO SUPERIOR.jpg' },
-]},
+{ id:300, type:'image', category:'ed-bellini', subCategory:'bellini-externas',
+  title:'Fachada', src:'assets/Ed. Bellini_/Externas/VILLAGIOTOSCANO_EXTERNO_BELLINI.png' },
 ```
+
+> `isPlant: true` aplica fundo branco e `object-fit: contain` — use para plantas baixas e mapas.
 
 ---
 
@@ -116,34 +149,28 @@ categories: [
 ### URL do bucket
 
 ```
-s3://skylineip/Tour Virtual/wr-construtora/ferramentas/galeria-wr-duo/
+s3://skylineip/Tour Virtual/nova alternativa/galeria-villagio/
 ```
 
-### Upload completo (primeira vez)
+### Sincronizar tudo
 
 ```bash
-aws s3 sync . "s3://skylineip/Tour Virtual/wr-construtora/ferramentas/galeria-wr-duo/" \
-  --exclude ".git/*" --exclude "*.md" \
-  --content-type "text/html" --include "*.html"
-
-aws s3 sync assets/ "s3://skylineip/Tour Virtual/wr-construtora/ferramentas/galeria-wr-duo/assets/"
+aws s3 sync villagio/ "s3://skylineip/Tour Virtual/nova alternativa/galeria-villagio/" \
+  --exclude ".git/*" --exclude "*.md" --exclude ".gitattributes"
 ```
 
-### Atualizar só os arquivos principais
+### Atualizar só o HTML
 
 ```bash
-aws s3 cp index.html "s3://skylineip/Tour Virtual/wr-construtora/ferramentas/galeria-wr-duo/index.html" \
-  --content-type "text/html"
-
-aws s3 cp inject.js "s3://skylineip/Tour Virtual/wr-construtora/ferramentas/galeria-wr-duo/inject.js" \
-  --content-type "application/javascript"
+aws s3 cp villagio/index.html \
+  "s3://skylineip/Tour Virtual/nova alternativa/galeria-villagio/index.html"
 ```
 
 ### URLs resultantes
 
 ```
-https://skylineip.s3.amazonaws.com/Tour%20Virtual/wr-construtora/ferramentas/galeria-wr-duo/index.html
-https://skylineip.s3.amazonaws.com/Tour%20Virtual/wr-construtora/ferramentas/galeria-wr-duo/inject.js
+https://skylineip.s3.amazonaws.com/Tour%20Virtual/nova%20alternativa/galeria-villagio/index.html
+https://skylineip.s3.amazonaws.com/Tour%20Virtual/nova%20alternativa/galeria-villagio/inject.js
 ```
 
 ---
@@ -155,7 +182,7 @@ https://skylineip.s3.amazonaws.com/Tour%20Virtual/wr-construtora/ferramentas/gal
 ```html
 <script>
 (() => {
-  const scriptUrl = 'https://skylineip.s3.amazonaws.com/Tour%20Virtual/wr-construtora/ferramentas/galeria-wr-duo/inject.js';
+  const scriptUrl = 'https://skylineip.s3.amazonaws.com/Tour%20Virtual/nova%20alternativa/galeria-villagio/inject.js';
   if (document.querySelector(`script[src="${scriptUrl}"]`)) return;
   const s = document.createElement('script');
   s.src = scriptUrl;
@@ -164,19 +191,19 @@ https://skylineip.s3.amazonaws.com/Tour%20Virtual/wr-construtora/ferramentas/gal
 </script>
 ```
 
-### Passo 2 — Acionar a galeria nos hotspots
+### Passo 2 — Acionar nos hotspots
 
 ```js
-// Abre galeria de imagens
+// Abre galeria de imagens (edifícios + aéreas)
 setTimeout(() => { GaleriaImagens(1); }, 300);
 
-// Fecha galeria de imagens
+// Fecha
 GaleriaImagens(0);
 
-// Abre galeria de plantas
+// Abre galeria de plantas (edifícios + percurso toscano)
 setTimeout(() => { GaleriaPlantas(1); }, 300);
 
-// Fecha galeria de plantas
+// Fecha
 GaleriaPlantas(0);
 ```
 
@@ -188,7 +215,7 @@ GaleriaPlantas(0);
 
 | Token | Valor |
 |-------|-------|
-| Background / Secundária | `#E4E4E4` |
+| Background | `#E4E4E4` |
 | Texto / Principal | `#0B2636` |
 | Acento | `#2471A3` |
 | Fonte títulos | Cormorant Garamond |
