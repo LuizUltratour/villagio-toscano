@@ -1,7 +1,7 @@
 (function (w, d) {
   'use strict';
 
-  var GALLERY_URL = 'https://skylineip.s3.amazonaws.com/Tour%20Virtual/wr-construtora/ferramentas/galeria-wr-duo/index.html';
+  var GALLERY_URL = 'https://skylineip.s3.amazonaws.com/Tour%20Virtual/nova%20alternativa/galeria-villagio/index.html';
 
   var overlay    = null;
   var msgHandler = null;
