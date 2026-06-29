@@ -1464,21 +1464,7 @@
       } catch (_) { return 'all'; }
     })();
 
-    const DISPLAY_CATS = (() => {
-      const BUILDING_IDS = ['ed-frente','ed-bellini','ed-castelli','ed-ferrara','ed-milani','ed-savoia','ed-vitalle'];
-      if (MODE === 'imagens') return GALLERY_CONFIG.categories.filter(c => BUILDING_IDS.includes(c.id) || c.id === 'aereas');
-      if (MODE === 'plantas') return GALLERY_CONFIG.categories.filter(c => c.subs && c.subs.some(s => s.id.includes('plantas')));
-      return GALLERY_CONFIG.categories;
-    })();
-
-    function firstSubFor(cat) {
-      if (!cat || !cat.subs || !cat.subs.length) return null;
-      if (MODE === 'plantas') {
-        const p = cat.subs.find(s => s.id.includes('plantas'));
-        if (p) return p.id;
-      }
-      return cat.subs[0].id;
-    }
+    const DISPLAY_CATS = GALLERY_CONFIG.categories;
 
     // ── helpers ──────────────────────────────────────────────────────
     function getCat(id) { return GALLERY_CONFIG.categories.find(c => c.id === id); }
@@ -1499,7 +1485,7 @@
         b.addEventListener('click', () => {
           if (cat.id === st.cat) return;
           st.cat = cat.id;
-          st.sub = firstSubFor(cat);
+          st.sub = (cat.subs && cat.subs.length) ? cat.subs[0].id : null;
           renderMainFilters(); renderSubFilters(); renderGallery();
         });
         elFilterMain.appendChild(b);
@@ -1792,7 +1778,8 @@
     // ── init ──────────────────────────────────────────────────────────
     function init() {
       if (DISPLAY_CATS.length) st.cat = DISPLAY_CATS[0].id;
-      st.sub = firstSubFor(getCat(st.cat));
+      const initCat = getCat(st.cat);
+      st.sub = (initCat && initCat.subs && initCat.subs.length) ? initCat.subs[0].id : null;
 
       renderMainFilters();
       renderSubFilters();
