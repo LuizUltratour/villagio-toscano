@@ -1,7 +1,7 @@
 (function (w, d) {
   'use strict';
 
-  var GALLERY_URL = 'https://skylineip.s3.amazonaws.com/Tour%20Virtual/nova%20alternativa/galeria-villagio/index.html';
+  var VILLAGIO_URL = 'https://skylineip.s3.amazonaws.com/Tour%20Virtual/nova%20alternativa/galeria-villagio/index.html';
 
   var overlay    = null;
   var msgHandler = null;
@@ -27,7 +27,7 @@
       'animation:_gcIn 0.3s ease both;';
 
     var iframe = d.createElement('iframe');
-    iframe.src  = GALLERY_URL + '?mode=' + encodeURIComponent(mode || 'imagens');
+    iframe.src  = VILLAGIO_URL + '?mode=' + encodeURIComponent(mode || 'imagens');
     iframe.style.cssText = 'width:100%;height:100%;border:none;display:block;background:#E4E4E4;';
     iframe.setAttribute('allow', 'fullscreen');
 
