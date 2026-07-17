@@ -1456,15 +1456,25 @@
     const elLbPrev = $('lb-prev');
     const elLbNext = $('lb-next');
 
-    // ── modo: 'imagens' | 'plantas' | 'all' ──────────────────────────
+    // ── modo: 'imagens' | 'all' | id de um empreendimento (ex: 'ed-bellini') ──
+    const BUILDING_MODES = ['ed-frente', 'ed-bellini', 'ed-castelli', 'ed-ferrara', 'ed-milani', 'ed-savoia', 'ed-vitalle'];
+    const VALID_MODES = ['all', 'imagens'].concat(BUILDING_MODES);
+
     const MODE = (() => {
       try {
         const m = new URLSearchParams(window.location.search).get('mode') || 'all';
-        return ['all', 'imagens', 'plantas'].includes(m) ? m : 'all';
+        return VALID_MODES.includes(m) ? m : 'all';
       } catch (_) { return 'all'; }
     })();
 
-    const DISPLAY_CATS = GALLERY_CONFIG.categories;
+    // categorias liberadas neste modo — null = sem restrição (todas)
+    const MODE_CATS = MODE === 'imagens' ? ['implantacao', 'aereas', 'percurso']
+      : BUILDING_MODES.includes(MODE) ? [MODE]
+      : null;
+
+    const DISPLAY_CATS = MODE_CATS
+      ? GALLERY_CONFIG.categories.filter(c => MODE_CATS.includes(c.id))
+      : GALLERY_CONFIG.categories;
 
     // ── helpers ──────────────────────────────────────────────────────
     function getCat(id) { return GALLERY_CONFIG.categories.find(c => c.id === id); }
@@ -1478,6 +1488,11 @@
     // ── filters ──────────────────────────────────────────────────────
     function renderMainFilters() {
       elFilterMain.innerHTML = '';
+      if (DISPLAY_CATS.length <= 1) {
+        elFilterMain.style.display = 'none';
+        return;
+      }
+      elFilterMain.style.display = '';
       DISPLAY_CATS.forEach(cat => {
         const b = document.createElement('button');
         b.className = 'f-btn' + (cat.id === st.cat ? ' active' : '');
@@ -1517,11 +1532,7 @@
     // ── gallery ──────────────────────────────────────────────────────
     function filteredItems() {
       return GALLERY_CONFIG.items.filter(item => {
-        if (MODE === 'plantas') {
-          if (item.category !== 'plantas') return false;
-          if (st.cat && item.subCategory !== st.cat) return false;
-          return true;
-        }
+        if (MODE_CATS && !MODE_CATS.includes(item.category)) return false;
         if (st.cat && st.cat !== 'all' && item.category !== st.cat) return false;
         if (st.sub && item.subCategory !== st.sub) return false;
         return true;

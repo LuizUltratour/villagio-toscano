@@ -55,16 +55,28 @@
   }
 
   // ── API pública ──────────────────────────────────────────────
-  // GaleriaImagens(1) → abre galeria de imagens
+  // GaleriaImagens(1) → abre galeria geral (Implantação, Aéreas, Percurso Toscano)
   // GaleriaImagens(0) → fecha
   w.GaleriaImagens = function (show) {
     if (show === 1) _open('imagens'); else _close();
   };
 
-  // GaleriaPlantas(1) → abre galeria de plantas
-  // GaleriaPlantas(0) → fecha
-  w.GaleriaPlantas = function (show) {
-    if (show === 1) _open('plantas'); else _close();
-  };
+  // Galerias individuais por empreendimento (Ed. ...)
+  // GaleriaFrente(1) / GaleriaBellini(1) / GaleriaCastelli(1) / GaleriaFerrara(1) /
+  // GaleriaMilani(1) / GaleriaSavoia(1) / GaleriaVitalle(1) → abrem a galeria do respectivo empreendimento
+  // Chame com (0) para fechar
+  function _buildingToggle(mode) {
+    return function (show) {
+      if (show === 1) _open(mode); else _close();
+    };
+  }
+
+  w.GaleriaFrente   = _buildingToggle('ed-frente');
+  w.GaleriaBellini  = _buildingToggle('ed-bellini');
+  w.GaleriaCastelli = _buildingToggle('ed-castelli');
+  w.GaleriaFerrara  = _buildingToggle('ed-ferrara');
+  w.GaleriaMilani   = _buildingToggle('ed-milani');
+  w.GaleriaSavoia   = _buildingToggle('ed-savoia');
+  w.GaleriaVitalle  = _buildingToggle('ed-vitalle');
 
 }(window, document));

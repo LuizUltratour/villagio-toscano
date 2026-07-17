@@ -82,11 +82,21 @@ O menu principal exibe uma categoria por edifício/área. Ao clicar em uma categ
 
 ### Modos via URL
 
+Cada empreendimento (pastas iniciadas com `Ed. ...`) tem sua própria galeria, isolada das demais. O restante das imagens (Implantação, Aéreas e Percurso Toscano) fica no modo geral `imagens`.
+
 | Modo | URL | O que exibe |
 |------|-----|-------------|
-| `all` (padrão) | `index.html` | Todas as categorias |
-| `imagens` | `index.html?mode=imagens` | Edifícios + Aéreas |
-| `plantas` | `index.html?mode=plantas` | Edifícios + Percurso Toscano |
+| `all` (padrão) | `index.html` | Todas as categorias, com menu completo (uso avulso/teste) |
+| `imagens` | `index.html?mode=imagens` | Implantação + Aéreas + Percurso Toscano |
+| `ed-frente` | `index.html?mode=ed-frente` | Somente Ed. Frente (Externas, Francesco, Giovanni, Lorenzo, Plantas) |
+| `ed-bellini` | `index.html?mode=ed-bellini` | Somente Ed. Bellini (Externas, Fachada, Internas, Plantas) |
+| `ed-castelli` | `index.html?mode=ed-castelli` | Somente Ed. Castelli (Externas, Internas) |
+| `ed-ferrara` | `index.html?mode=ed-ferrara` | Somente Ed. Ferrara (Externas, Internas) |
+| `ed-milani` | `index.html?mode=ed-milani` | Somente Ed. Milani (Externas, Interna) |
+| `ed-savoia` | `index.html?mode=ed-savoia` | Somente Ed. Savoia (Externas, Internas) |
+| `ed-vitalle` | `index.html?mode=ed-vitalle` | Somente Ed. Vitalle (Externas, Internas) |
+
+Nos modos de empreendimento (`ed-*`), o menu principal fica oculto (só existe uma categoria) e a galeria abre direto na primeira subcategoria (**Externas**).
 
 ### Lightbox
 
@@ -194,20 +204,34 @@ https://skylineip.s3.amazonaws.com/Tour%20Virtual/nova%20alternativa/galeria-vil
 ### Passo 2 — Acionar nos hotspots
 
 ```js
-// Abre galeria de imagens (edifícios + aéreas)
+// Abre galeria geral (Implantação + Aéreas + Percurso Toscano)
 setTimeout(() => { GaleriaImagens(1); }, 300);
+GaleriaImagens(0); // fecha
 
-// Fecha
-GaleriaImagens(0);
+// Abre a galeria de um empreendimento específico
+setTimeout(() => { GaleriaFrente(1); }, 300);
+GaleriaFrente(0); // fecha
 
-// Abre galeria de plantas (edifícios + percurso toscano)
-setTimeout(() => { GaleriaPlantas(1); }, 300);
+setTimeout(() => { GaleriaBellini(1); }, 300);
+GaleriaBellini(0);
 
-// Fecha
-GaleriaPlantas(0);
+setTimeout(() => { GaleriaCastelli(1); }, 300);
+GaleriaCastelli(0);
+
+setTimeout(() => { GaleriaFerrara(1); }, 300);
+GaleriaFerrara(0);
+
+setTimeout(() => { GaleriaMilani(1); }, 300);
+GaleriaMilani(0);
+
+setTimeout(() => { GaleriaSavoia(1); }, 300);
+GaleriaSavoia(0);
+
+setTimeout(() => { GaleriaVitalle(1); }, 300);
+GaleriaVitalle(0);
 ```
 
-> O `setTimeout` garante que o script já foi carregado antes de chamar a função.
+> O `setTimeout` garante que o script já foi carregado antes de chamar a função. Cada função abre/fecha o mesmo overlay — chamar qualquer uma delas com `(0)` fecha a galeria aberta no momento.
 
 ---
 
