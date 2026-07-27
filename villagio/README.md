@@ -208,41 +208,40 @@ https://skylineip.s3.amazonaws.com/Tour%20Virtual/nova%20alternativa/galeria-vil
 
 ### Passo 2 — Acionar nos hotspots
 
+> ⚠️ **Abrir e fechar são AÇÕES SEPARADAS, em hotspots/botões diferentes.**
+> Nunca coloque as duas linhas juntas na mesma ação "On Click" — isso abre
+> e fecha a galeria no mesmo clique e, se o script ainda não carregou, o
+> `(0)` desprotegido quebra com `ReferenceError`.
+
+**No hotspot que ABRE a galeria** (ex.: ícone "Ed. Lorenzo" na cena), cole
+apenas isto na ação "On Click" — é a chamada "com espera" (poll): tenta a
+cada 100ms até a função existir, em vez de um `setTimeout` fixo de 300ms que
+falha se o clique acontecer antes do `inject.js` terminar de baixar (ex.:
+primeiro clique do usuário, logo que o tour abre, em conexão mais lenta):
+
 ```js
-// Abre galeria geral (Implantação + Aéreas + Percurso Toscano)
-setTimeout(() => { GaleriaImagens(1); }, 300);
-GaleriaImagens(0); // fecha
-
-// Abre a galeria de um empreendimento específico
-setTimeout(() => { GaleriaFrancesco(1); }, 300);
-GaleriaFrancesco(0); // fecha
-
-setTimeout(() => { GaleriaGiovanni(1); }, 300);
-GaleriaGiovanni(0);
-
-setTimeout(() => { GaleriaLorenzo(1); }, 300);
-GaleriaLorenzo(0);
-
-setTimeout(() => { GaleriaBellini(1); }, 300);
-GaleriaBellini(0);
-
-setTimeout(() => { GaleriaCastelli(1); }, 300);
-GaleriaCastelli(0);
-
-setTimeout(() => { GaleriaFerrara(1); }, 300);
-GaleriaFerrara(0);
-
-setTimeout(() => { GaleriaMilani(1); }, 300);
-GaleriaMilani(0);
-
-setTimeout(() => { GaleriaSavoia(1); }, 300);
-GaleriaSavoia(0);
-
-setTimeout(() => { GaleriaVitalle(1); }, 300);
-GaleriaVitalle(0);
+(function w(n){ if (typeof GaleriaLorenzo === 'function') GaleriaLorenzo(1); else if (n) setTimeout(() => w(n-1), 100); })(30);
 ```
 
-> O `setTimeout` garante que o script já foi carregado antes de chamar a função. Cada função abre/fecha o mesmo overlay — chamar qualquer uma delas com `(0)` fecha a galeria aberta no momento.
+Troque `GaleriaLorenzo` pelo nome do empreendimento: `GaleriaImagens`,
+`GaleriaFrancesco`, `GaleriaGiovanni`, `GaleriaLorenzo`, `GaleriaBellini`,
+`GaleriaCastelli`, `GaleriaFerrara`, `GaleriaMilani`, `GaleriaSavoia`,
+`GaleriaVitalle`. `(30)` = até 30 tentativas de 100ms (3s de tolerância).
+
+**Se você tiver um botão próprio de fechar** (fora do X que já existe dentro
+do overlay da galeria), cole nele — e só nele — a chamada direta, sem poll:
+
+```js
+GaleriaLorenzo(0);
+```
+
+Essa chamada é seguro sem poll porque só é clicável depois que a galeria já
+está aberta na tela, ou seja, o script já carregou.
+
+> Hotspots já configurados com `setTimeout(() => { GaleriaX(1); }, 300)` (sem
+> o `(0)` junto) continuam funcionando na maioria das vezes — só troque para
+> o poll acima os que estiverem apresentando o erro `is not defined` no
+> console (normalmente os primeiros hotspots clicados após o tour abrir).
 
 ---
 
