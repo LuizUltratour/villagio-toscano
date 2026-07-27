@@ -62,16 +62,18 @@
   };
 
   // Galerias individuais por empreendimento (Ed. ...)
-  // GaleriaFrente(1) / GaleriaBellini(1) / GaleriaCastelli(1) / GaleriaFerrara(1) /
-  // GaleriaMilani(1) / GaleriaSavoia(1) / GaleriaVitalle(1) → abrem a galeria do respectivo empreendimento
-  // Chame com (0) para fechar
+  // GaleriaFrancesco(1) / GaleriaGiovanni(1) / GaleriaLorenzo(1) / GaleriaBellini(1) /
+  // GaleriaCastelli(1) / GaleriaFerrara(1) / GaleriaMilani(1) / GaleriaSavoia(1) / GaleriaVitalle(1)
+  // → abrem a galeria do respectivo empreendimento. Chame com (0) para fechar
   function _buildingToggle(mode) {
     return function (show) {
       if (show === 1) _open(mode); else _close();
     };
   }
 
-  w.GaleriaFrente   = _buildingToggle('ed-frente');
+  w.GaleriaFrancesco = _buildingToggle('ed-francesco');
+  w.GaleriaGiovanni  = _buildingToggle('ed-giovanni');
+  w.GaleriaLorenzo   = _buildingToggle('ed-lorenzo');
   w.GaleriaBellini  = _buildingToggle('ed-bellini');
   w.GaleriaCastelli = _buildingToggle('ed-castelli');
   w.GaleriaFerrara  = _buildingToggle('ed-ferrara');

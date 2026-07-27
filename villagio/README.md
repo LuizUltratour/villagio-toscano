@@ -31,12 +31,13 @@ assets/
 │   ├── Internas/
 │   └── Planta Baixa_/
 ├── Ed. Frente_/
-│   ├── Externas/
-│   ├── Internas/
-│   │   ├── Ed. Francesco_/
-│   │   ├── Ed. Giovanni/
-│   │   └── Ed. Lorenzo/
-│   └── Plantas Baixas/
+│   ├── Externas/                          (compartilhada por Francesco, Giovanni e Lorenzo)
+│   ├── Ed. Francesco_/
+│   │   └── Plantas Baixas - Francesco/
+│   ├── Ed. Giovanni/
+│   │   └── Plantas Baixas - Giovanni/
+│   └── Ed. Lorenzo/
+│       └── Plantas Baixas - Lorenzo/
 ├── Ed. Bellini_/
 │   ├── Externas/
 │   ├── Fachada/
@@ -72,7 +73,9 @@ O menu principal exibe uma categoria por edifício/área. Ao clicar em uma categ
 | Implantação | — |
 | Aéreas | — |
 | Percurso Toscano | Externas · Internas · Plantas |
-| Ed. Frente | Externas · Ed. Francesco · Ed. Giovanni · Ed. Lorenzo · Plantas |
+| Ed. Francesco | Externas · Internas · Plantas |
+| Ed. Giovanni | Externas · Internas · Plantas |
+| Ed. Lorenzo | Externas · Internas · Plantas |
 | Ed. Bellini | Externas · Fachada · Internas · Plantas |
 | Ed. Castelli | Externas · Internas |
 | Ed. Ferrara | Externas · Internas |
@@ -88,7 +91,9 @@ Cada empreendimento (pastas iniciadas com `Ed. ...`) tem sua própria galeria, i
 |------|-----|-------------|
 | `all` (padrão) | `index.html` | Todas as categorias, com menu completo (uso avulso/teste) |
 | `imagens` | `index.html?mode=imagens` | Implantação + Aéreas + Percurso Toscano |
-| `ed-frente` | `index.html?mode=ed-frente` | Somente Ed. Frente (Externas, Francesco, Giovanni, Lorenzo, Plantas) |
+| `ed-francesco` | `index.html?mode=ed-francesco` | Somente Ed. Francesco (Externas, Internas, Plantas) |
+| `ed-giovanni` | `index.html?mode=ed-giovanni` | Somente Ed. Giovanni (Externas, Internas, Plantas) |
+| `ed-lorenzo` | `index.html?mode=ed-lorenzo` | Somente Ed. Lorenzo (Externas, Internas, Plantas) |
 | `ed-bellini` | `index.html?mode=ed-bellini` | Somente Ed. Bellini (Externas, Fachada, Internas, Plantas) |
 | `ed-castelli` | `index.html?mode=ed-castelli` | Somente Ed. Castelli (Externas, Internas) |
 | `ed-ferrara` | `index.html?mode=ed-ferrara` | Somente Ed. Ferrara (Externas, Internas) |
@@ -209,8 +214,14 @@ setTimeout(() => { GaleriaImagens(1); }, 300);
 GaleriaImagens(0); // fecha
 
 // Abre a galeria de um empreendimento específico
-setTimeout(() => { GaleriaFrente(1); }, 300);
-GaleriaFrente(0); // fecha
+setTimeout(() => { GaleriaFrancesco(1); }, 300);
+GaleriaFrancesco(0); // fecha
+
+setTimeout(() => { GaleriaGiovanni(1); }, 300);
+GaleriaGiovanni(0);
+
+setTimeout(() => { GaleriaLorenzo(1); }, 300);
+GaleriaLorenzo(0);
 
 setTimeout(() => { GaleriaBellini(1); }, 300);
 GaleriaBellini(0);
